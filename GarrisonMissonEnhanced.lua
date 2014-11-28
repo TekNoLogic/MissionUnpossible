@@ -4,9 +4,7 @@ local myname, ns = ...
 local L = ns.L;
 local f  = CreateFrame("frame",nil,UIParent);
 ns.main = f;
---local GarrisonMissonEnhancedSave = {};
-local pname = "";
-local save="";
+local save = {}
 local starttime = time();
 local old_scroll;
 local traiticons = {};
@@ -52,11 +50,11 @@ function f:CheckMission(accurate)
 		--	print(v["missionID"]);
 		--end
 
-		if not save[pname][v["missionID"]] then
+		if not save[v["missionID"]] then
 			--print("doing");
-			save[pname][v["missionID"]] = {};
-			save[pname][v["missionID"]]["time"] = curtime;
-			save[pname][v["missionID"]]["accurate"] = accurate;
+			save[v["missionID"]] = {};
+			save[v["missionID"]]["time"] = curtime;
+			save[v["missionID"]]["accurate"] = accurate;
 		end
 	end
 	--event fires on reload or login with 1 mission avail, then 2 etc so wait at least 20 seconds before wiping missions
@@ -163,7 +161,7 @@ function f:GarrisonMissionList_Update()
 					local extratext="";
 					if ns.config["TimeOnMission"] then
 						extratext=L.MISSION_AVAILABLE..": ";
-						local timeon = time()-save[pname][mission['missionID']]['time']
+						local timeon = time()-save[mission['missionID']]['time']
 
 						if timeon<60 then
 							extratext = extratext..timeon.."s";
@@ -174,7 +172,7 @@ function f:GarrisonMissionList_Update()
 							local minutes = round((timeon/60) % 60);
 							extratext = extratext..hours.."h "..minutes.."m";
 						end
-						if (save[pname][mission['missionID']]["accurate"] == false) then
+						if (save[mission['missionID']]["accurate"] == false) then
 							extratext = extratext.."*";
 						end
 						extratext = extratext.."  ";
@@ -243,7 +241,7 @@ function f:GarrisonMissionList_Update()
 end
 
 function f:ScanForRemoval()
-	for k,_ in pairs(save[pname]) do
+	for k,_ in pairs(save) do
 		if not missionavail[k] then
 			f:RemoveMission(k)
 		end
@@ -251,7 +249,7 @@ function f:ScanForRemoval()
 end
 
 function f:RemoveMission(id)
-	save[pname][id] = nil
+	save[id] = nil
 end
 
 function f:doscroll(...)
@@ -340,12 +338,6 @@ end
 
 
 function ns.OnLoad()
-	pname = GetUnitName("player", false).."-"..GetRealmName()
-
-	GarrisonMissonEnhancedSave = GarrisonMissonEnhancedSave or {}
-	GarrisonMissonEnhancedSave[pname] = GarrisonMissonEnhancedSave[pname] or {}
-	save = GarrisonMissonEnhancedSave
-
 	f:CheckMission(false)
 
 	f:RegisterEvent("GARRISON_MISSION_LIST_UPDATE")
