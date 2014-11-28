@@ -161,95 +161,68 @@ function f:CheckMoreThanOneCounter(missionid)
 	end
 end
 
+local function CreateTraitFrame(parent)
+	local f = CreateFrame("Frame", nil, parent, "GarrisonMissionEnemyLargeMechanicTemplate")
+
+	local label = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	label:SetPoint("BOTTOM", 0, -16)
+	f.label = label
+
+	return f
+end
+
 function f:GarrisonMissionList_Update()
-	--traiticons = {};
+	local self = GarrisonMissionFrame.MissionTab.MissionList
+	f:HideAllTraits()
 
-	local missions;
-	local self = GarrisonMissionFrame.MissionTab.MissionList;
-	if self.showInProgress then
-		--print("progress");
-		f:HideAllTraits();
-	else
-		f:HideAllTraits();
-		missions = self.availableMissions
-		local scrollFrame = self.listScroll
-		local offset = HybridScrollFrame_GetOffset(scrollFrame)
-		local buttons = scrollFrame.buttons
-		for i = 1, #buttons do
-			local button = buttons[i];
-			local index = offset + i; -- adjust index
-			if index <= #missions then
-				local mission = missions[index];
+	if self.showInProgress then return end
 
-				if not button.extraEnhancedText then
-					button.extraEnhancedText = button:CreateFontString();
-					button.extraEnhancedText:SetFont("Fonts\\FRIZQT__.ttf", 12)
-					button.extraEnhancedText:SetPoint("BOTTOMLEFT", 165, 5)
-				end
+	local missions = self.availableMissions
+	local scrollFrame = self.listScroll
+	local offset = HybridScrollFrame_GetOffset(scrollFrame)
+	for i,button in pairs(scrollFrame.buttons) do
+		local index = offset + i
+		if index <= #missions then
+			local mission = missions[index]
+			local missionID = mission.missionID
 
-				button.extraEnhancedText:Show();
-				local extratext=L.MISSION_AVAILABLE..": ";
-				local timeon = time()-save[mission['missionID']]['time']
-
-				if timeon<60 then
-					extratext = extratext..timeon.."s";
-				elseif timeon < 3600 then
-					extratext = extratext..round(timeon/60,0).."m";
-				else
-					local hours = round(timeon/60/60);
-					local minutes = round((timeon/60) % 60);
-					extratext = extratext..hours.."h "..minutes.."m";
-				end
-				if (save[mission['missionID']]["accurate"] == false) then
-					extratext = extratext.."*";
-				end
-				extratext = extratext.."  ";
-
-				extratext = extratext..L.FOLLOWER_REQUIRED..": "..mission['numFollowers'];
-				button.extraEnhancedText:SetText(extratext);
-
-				f:CreateCounter(mission['missionID']);
-				if not traiticons[mission['missionID']] then
-					traiticons[mission['missionID']] = {}
-				end
-
-				local missionbosses = select(8,C_Garrison.GetMissionInfo(mission['missionID']));
-				local buttoncount = 1;
-				for _,v in pairs(missionbosses) do
-
-					for _,v2 in pairs(v["mechanics"]) do
-						--print_r(v2);
-						if not traiticons[mission['missionID']][buttoncount] then
-							local mechbutt = CreateFrame("Frame", nil, button, "GarrisonMissionEnemyLargeMechanicTemplate")
-
-							local label = mechbutt:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-							label:SetPoint("BOTTOM", 0, -16)
-							mechbutt.label = label
-
-							traiticons[mission['missionID']][buttoncount] = mechbutt
-						end
-
-						traiticons[mission['missionID']][buttoncount].label:SetText(GetCounterText(v2["name"],mission['missionID']))
-
-						local cancounter = f:CheckCounter(v2["name"],mission['missionID'])
-
-						traiticons[mission['missionID']][buttoncount]:SetParent(button)
-
-						traiticons[mission['missionID']][buttoncount].Icon:SetTexture(v2["icon"])
-						if(buttoncount == 1) then
-
-							traiticons[mission['missionID']][buttoncount]:SetPoint("LEFT",button.Rewards[mission['numRewards']], "LEFT", -40, 0);
-						else
-							traiticons[mission['missionID']][buttoncount]:SetPoint("LEFT",traiticons[mission['missionID']][buttoncount-1], "LEFT", -40, 0);
-						end
-
-						traiticons[mission['missionID']][buttoncount]:Show();
-						buttoncount=buttoncount+1
-
-					end
-				end
-				f:CheckMoreThanOneCounter(mission['missionID']);
+			if not button.extraEnhancedText then
+				button.extraEnhancedText = button:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+				button.extraEnhancedText:SetPoint("BOTTOMLEFT", 165, 5)
 			end
+
+			button.extraEnhancedText:Show()
+			local extratext = mission.numFollowers.. " followers"
+			button.extraEnhancedText:SetText(extratext)
+
+			f:CreateCounter(missionID)
+			if not traiticons[missionID] then
+				traiticons[missionID] = {}
+			end
+
+			local _, _, _, _, _, _, _, missionbosses = C_Garrison.GetMissionInfo(missionID)
+			local missiontraits = traiticons[missionID]
+			local buttoncount = 1
+			local anchor = button.Rewards[mission.numRewards]
+			for _,boss in pairs(missionbosses) do
+				for _,mechanic in pairs(boss.mechanics) do
+					local trait = missiontraits[buttoncount] or CreateTraitFrame(button)
+
+					local cancounter = f:CheckCounter(mechanic.name, missionID)
+
+					trait.label:SetText(GetCounterText(mechanic.name, missionID))
+					trait.Icon:SetTexture(mechanic.icon)
+
+					trait:SetParent(button)
+					trait:SetPoint("LEFT", anchor, "LEFT", -40, 0)
+					trait:Show()
+
+					anchor = trait
+					buttoncount = buttoncount + 1
+				end
+			end
+			
+			f:CheckMoreThanOneCounter(missionID)
 		end
 	end
 end
