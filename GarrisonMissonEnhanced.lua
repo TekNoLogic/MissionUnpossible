@@ -16,11 +16,11 @@ local oldfollowerrightclick = "";
 f.version = 1;
 f.rightclickhook = false;
 GarrionMissonEnhanceConfig = {};
-local function round(num, idp)
-		local mult = 10^(idp or 0)
-		return math.floor(num * mult + 0.5) / mult
-end
 
+local function round(num, idp)
+	local mult = 10^(idp or 0)
+	return math.floor(num * mult + 0.5) / mult
+end
 
 local function print_r (t, indent, done)
   done = done or {}
@@ -28,8 +28,7 @@ local function print_r (t, indent, done)
   local nextIndent -- Storage for next indentation value
   for key, value in pairs (t) do
     if type (value) == "table" and not done [value] then
-      nextIndent = nextIndent or
-          (indent .. string.rep(' ',string.len(tostring (key))+2))
+      nextIndent = nextIndent or (indent .. string.rep(' ',string.len(tostring (key))+2))
           -- Shortcut conditional allocation
       done [value] = true
       print (indent .. "[" .. tostring (key) .. "] => Table {");
@@ -41,10 +40,6 @@ local function print_r (t, indent, done)
     end
   end
 end
-
-
-
-
 
 function f:CheckMission(accurate)
 	local missions = C_Garrison.GetAvailableMissions()
@@ -64,28 +59,20 @@ function f:CheckMission(accurate)
 			save[pname][v["missionID"]]["time"] = curtime;
 			save[pname][v["missionID"]]["accurate"] = accurate;
 		end
-
 	end
 	--event fires on reload or login with 1 mission avail, then 2 etc so wait at least 20 seconds before wiping missions
-
-
-
 end
 
 
 function f:HideAllTraits()
-	--traiticons[mission['missionID']][buttoncount]
 	for _,v in pairs(traiticons) do
 		for _,v2 in pairs(v) do
 			v2:Hide();
 		end
-
 	end
 end
 
 function f:CreateCounter(missionid)
-
-
 	counters = {};
 	addfollower[missionid] = {};
 	local mission_counter = C_Garrison.GetBuffedFollowersForMission(missionid);
@@ -100,32 +87,20 @@ function f:CreateCounter(missionid)
 				counters[v2["name"]][k] = false;
 			end
 		end
-
 	end
-	--print_r(counters);
 end
 
-local function checkempty(tabl)
-	for k,_ in pairs(tabl) do
-		return 1;
-	end
-	return 0;
-end
 local function checkemptyavail(tabl)
 	for _,v in pairs(tabl) do
-		if(v==false) then
-			--continue;
-			return 1;
-
-		end;
+		if v == false then
+			return true
+		end
 	end
-	return 0;
 end
 
-
 function f:CheckCounter(trait,missionid)
-	if  not counters[trait] or checkempty(counters[trait])==0 then
-		return 0;
+	if not counters[trait] or next(counters[trait]) then
+		return 0
 	else
 		local lastfollower = "";
 
@@ -150,12 +125,10 @@ end
 
 function f:CheckMoreThanOneCounter(missionid)
 	for k,v in pairs(addfollower[missionid]) do
-		if(checkemptyavail(counters[k])==1) then
-			addfollower[missionid][k] = nil;
+		if checkemptyavail(counters[k]) then
+			addfollower[missionid][k] = nil
 		end
-
 	end
-
 end
 
 function f:GarrisonMissionList_Update()
@@ -163,7 +136,7 @@ function f:GarrisonMissionList_Update()
 
 	local missions;
 	local self = GarrisonMissionFrame.MissionTab.MissionList;
-	if (self.showInProgress) then
+	if self.showInProgress then
 		--print("progress");
 		f:HideAllTraits();
 	else
@@ -177,20 +150,19 @@ function f:GarrisonMissionList_Update()
 		for i = 1, numButtons do
 			local button = buttons[i];
 			local index = offset + i; -- adjust index
-			if ( index <= numMissions) then
+			if index <= numMissions then
 				local mission = missions[index];
 
-				if(ns.config["TimeOnMission"]==true or ns.config["FollowerRequired"]==true) then
-
-					if not (button.extraEnhancedText) then
+				if ns.config["TimeOnMission"] or ns.config["FollowerRequired"] then
+					if not button.extraEnhancedText then
 						button.extraEnhancedText = button:CreateFontString();
 						button.extraEnhancedText:SetFont("Fonts\\FRIZQT__.ttf", 12)
-						button.extraEnhancedText:SetPoint("BOTTOMLEFT", 165, 5);
-
+						button.extraEnhancedText:SetPoint("BOTTOMLEFT", 165, 5)
 					end
+
 					button.extraEnhancedText:Show();
 					local extratext="";
-					if(ns.config["TimeOnMission"] == true) then
+					if ns.config["TimeOnMission"] then
 						extratext=L.MISSION_AVAILABLE..": ";
 						local timeon = time()-save[pname][mission['missionID']]['time']
 
@@ -207,23 +179,19 @@ function f:GarrisonMissionList_Update()
 							extratext = extratext.."*";
 						end
 						extratext = extratext.."  ";
-
 					end
-					if(ns.config["FollowerRequired"] == true) then
+					if ns.config["FollowerRequired"] then
 						extratext = extratext..L.FOLLOWER_REQUIRED..": "..mission['numFollowers'];
 					end
 					button.extraEnhancedText:SetText(extratext);
 				else
 
-					if (button.extraEnhancedText~=nil) then
-						button.extraEnhancedText:Hide();
+					if button.extraEnhancedText then
+						button.extraEnhancedText:Hide()
 					end
-
 				end
 
-
-				if(ns.config["CounterTraits"]==true) then
-
+				if ns.config["CounterTraits"] then
 					f:CreateCounter(mission['missionID']);
 					if not traiticons[mission['missionID']] then
 						traiticons[mission['missionID']] = {}
@@ -242,9 +210,6 @@ function f:GarrisonMissionList_Update()
 							end
 
 							local cancounter = f:CheckCounter(v2["name"],mission['missionID']);
-
-
-
 
 							traiticons[mission['missionID']][buttoncount]:SetParent(button);
 
@@ -269,7 +234,6 @@ function f:GarrisonMissionList_Update()
 							traiticons[mission['missionID']][buttoncount]:Show();
 							buttoncount=buttoncount+1
 
-
 						end
 					end
 					f:CheckMoreThanOneCounter(mission['missionID']);
@@ -279,30 +243,21 @@ function f:GarrisonMissionList_Update()
 	end
 end
 
-
-
-
 function f:ScanForRemoval()
 	for k,_ in pairs(save[pname]) do
-
 		if not missionavail[k] then
-
-			f:RemoveMission(k);
-
+			f:RemoveMission(k)
 		end
 	end
-
 end
 
 function f:RemoveMission(id)
-	save[pname][id] = nil;
-
+	save[pname][id] = nil
 end
 
 function f:doscroll(...)
-	old_scroll(...);
-	 f:GarrisonMissionList_Update();
-
+	old_scroll(...)
+	f:GarrisonMissionList_Update()
 end
 
 local function UpdateFollowerTimeLeft(self)
@@ -322,20 +277,17 @@ local function UpdateFollowerTimeLeft(self)
 	for i = 1, numButtons do
 		local button = buttons[i];
 		local index = offset + i; -- adjust index
-		if ( index <= numFollowers ) then
+		if index <= numFollowers then
 			local follower = followers[followersList[index]];
 			if (follower.status == GARRISON_FOLLOWER_ON_MISSION) then
-				local found = false;
-				for _,v in pairs(inprogress)  do
+				local found = false
+				for _,v in pairs(inprogress) do
 					for _,v2 in pairs(v.followers) do
-
-						if (v2 == follower.followerID) then
-
-							button.Status:SetText(follower.status.." ("..v.timeLeft..")");
-							found = true;
-							break;
+						if v2 == follower.followerID then
+							button.Status:SetText(follower.status.." ("..v.timeLeft..")")
+							found = true
+							break
 						end
-
 					end
 					if found then break end
 				end
