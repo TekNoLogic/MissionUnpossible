@@ -5,9 +5,6 @@
 ## Version: 1.6.0
 ## Notes: Improves the Garrison Missons
 
-## SavedVariables: GarrisonMissonEnhancedSave,GarrisonMissonEnhancedGlobalConfig
-## SavedVariablesPerCharacter: GarrisonMissonEnhancedLocalConfig
-
 externals\events.lua
 
 localisation\locale_enUS.lua
