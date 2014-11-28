@@ -138,16 +138,14 @@ function f:GarrisonMissionList_Update()
 		f:HideAllTraits();
 	else
 		f:HideAllTraits();
-		missions = self.availableMissions;
-		local numMissions = #missions;
-		local scrollFrame = self.listScroll;
-		local offset = HybridScrollFrame_GetOffset(scrollFrame);
-		local buttons = scrollFrame.buttons;
-		local numButtons = #buttons;
-		for i = 1, numButtons do
+		missions = self.availableMissions
+		local scrollFrame = self.listScroll
+		local offset = HybridScrollFrame_GetOffset(scrollFrame)
+		local buttons = scrollFrame.buttons
+		for i = 1, #buttons do
 			local button = buttons[i];
 			local index = offset + i; -- adjust index
-			if index <= numMissions then
+			if index <= #missions then
 				local mission = missions[index];
 
 				if ns.config["TimeOnMission"] or ns.config["FollowerRequired"] then
@@ -267,11 +265,10 @@ local function UpdateFollowerTimeLeft(self)
 	local scrollFrame = followerFrame.FollowerList.listScroll;
 	local offset = HybridScrollFrame_GetOffset(scrollFrame);
 	local buttons = scrollFrame.buttons;
-	local numButtons = #buttons;
 	local showCounters = followerFrame.FollowerList.showCounters;
 	local canExpand = followerFrame.FollowerList.canExpand;
 	local inprogress = C_Garrison.GetInProgressMissions();
-	for i = 1, numButtons do
+	for i=1,#buttons do
 		local button = buttons[i];
 		local index = offset + i; -- adjust index
 		if index <= numFollowers then
@@ -307,7 +304,6 @@ local function ShowMission(mission)
 end
 
 --local function MissionComplete()
-
 	--GarrisonMissionFrame.MissionComplete.NextMissionButton:Enable();
 --end
 
