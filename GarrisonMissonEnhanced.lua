@@ -1,36 +1,27 @@
 
 local myname, ns = ...
 
-local L = ns.L;
-local f  = CreateFrame("frame")
-local old_scroll;
-local traiticons = {};
-local counters = {};
-local addfollower = {};
+local f = CreateFrame("frame")
+local old_scroll
+local traiticons = {}
+local counters = {}
+local addfollower = {}
 local oldfollowerrightclick
 
 
-function f:HideAllTraits()
-	for _,v in pairs(traiticons) do
-		for _,v2 in pairs(v) do
-			v2:Hide();
-		end
-	end
-end
-
 function f:CreateCounter(missionid)
-	counters = {};
-	addfollower[missionid] = {};
-	local mission_counter = C_Garrison.GetBuffedFollowersForMission(missionid);
+	counters = {}
+	addfollower[missionid] = {}
+	local mission_counter = C_Garrison.GetBuffedFollowersForMission(missionid)
 	for k,v in pairs(mission_counter) do
 		for _,v2 in pairs(v) do
 			if not counters[v2["name"]] then
 				counters[v2["name"]] = {}
 			end
 			if(C_Garrison.GetFollowerStatus(k)==GARRISON_FOLLOWER_ON_MISSION or C_Garrison.GetFollowerStatus(k)==GARRISON_FOLLOWER_INACTIVE) then
-				counters[v2["name"]][k] = true;
+				counters[v2["name"]][k] = true
 			else
-				counters[v2["name"]][k] = false;
+				counters[v2["name"]][k] = false
 			end
 		end
 	end
@@ -48,7 +39,7 @@ function f:CheckCounter(trait,missionid)
 	if not counters[trait] or not next(counters[trait]) then
 		return 0
 	else
-		local lastfollower = "";
+		local lastfollower = ""
 
 		for k,v in pairs(counters[trait]) do
 			--if not on mission directly return otherwise check if there is one not on mission
@@ -96,16 +87,6 @@ local function GetCounterText(trait, missionid)
 			return "|cff9d9d9d".. available.. "/".. total
 		else
 			return available.. "/".. total
-		end
-	end
-end
-
---C_Garrison.AddFollowerToMission
-
-local function CheckMoreThanOneCounter(missionid)
-	for k,v in pairs(addfollower[missionid]) do
-		if checkemptyavail(counters[k]) then
-			addfollower[missionid][k] = nil
 		end
 	end
 end
@@ -159,12 +140,19 @@ local function UpdateMission(frame, mission)
 		end
 	end
 
-	CheckMoreThanOneCounter(missionID)
+	for k,v in pairs(addfollower[missionID]) do
+		if checkemptyavail(counters[k]) then
+			addfollower[missionID][k] = nil
+		end
+	end
 end
 
 function f:GarrisonMissionList_Update()
 	local self = GarrisonMissionFrame.MissionTab.MissionList
-	f:HideAllTraits()
+
+	for _,traits in pairs(traiticons) do
+		for _,trait in pairs(traits) do trait:Hide() end
+	end
 
 	if self.showInProgress then return end
 
@@ -204,22 +192,16 @@ end
 
 local function ShowMission(mission)
 	local i = 1
-	for _,k in pairs(addfollower[mission['missionID']]) do
-		local followerFrame = GarrisonMissionFrame.MissionTab.MissionPage.Followers[i];
-		local followerInfo = C_Garrison.GetFollowerInfo(k);
-		GarrisonMissionPage_SetFollower(followerFrame, followerInfo);
-		i=i+1;
-		--C_Garrison.AddFollowerToMission(mission['missionID'],k);
+	for _,k in pairs(addfollower[mission.missionID]) do
+		local followerFrame = GarrisonMissionFrame.MissionTab.MissionPage.Followers[i]
+		local followerInfo = C_Garrison.GetFollowerInfo(k)
+		GarrisonMissionPage_SetFollower(followerFrame, followerInfo)
+		i=i+1
 	end
 end
 
---local function MissionComplete()
-	--GarrisonMissionFrame.MissionComplete.NextMissionButton:Enable();
---end
-
-local function FollowerRightClick (...)
-	local MISSION_PAGE_FRAME = GarrisonMissionFrame.MissionTab.MissionPage;
-	local self,button = ...;
+local function FollowerRightClick(self, button, ...)
+	local MISSION_PAGE_FRAME = GarrisonMissionFrame.MissionTab.MissionPage
 	if MISSION_PAGE_FRAME:IsVisible() and MISSION_PAGE_FRAME.missionInfo and button == "RightButton" then
 		if not self.info.status then
 			GarrisonMissionPage_AddFollower(self.id)
@@ -235,19 +217,15 @@ local function FollowerRightClick (...)
 				end
 			end
 		else
-			return oldfollowerrightclick(...)
+			return oldfollowerrightclick(self, button, ...)
 		end
 	else
-		return oldfollowerrightclick(...)
+		return oldfollowerrightclick(self, button, ...)
 	end
 end
 
 
 function ns.OnLoad()
-	f:RegisterEvent("GARRISON_MISSION_LIST_UPDATE")
-	f:RegisterEvent("GARRISON_MISSION_STARTED")
-	f:RegisterEvent("PLAYER_LOGOUT")
-
 	old_scroll = GarrisonMissionFrame.MissionTab.MissionList.listScroll.update
 	GarrisonMissionFrame.MissionTab.MissionList.listScroll.update = f.doscroll
 	hooksecurefunc("GarrisonMissionList_Update", f.GarrisonMissionList_Update)
@@ -257,13 +235,3 @@ function ns.OnLoad()
 	oldfollowerrightclick = GarrisonFollowerListButton_OnClick
 	GarrisonFollowerListButton_OnClick = FollowerRightClick
 end
-
-
--- ns.RegisterEvent("GARRISON_MISSION_LIST_UPDATE")
--- function ns.GARRISON_MISSION_LIST_UPDATE()
--- end
-
-
--- ns.RegisterEvent("GARRISON_MISSION_STARTED")
--- function ns.GARRISON_MISSION_STARTED(event, missionID)
--- end
