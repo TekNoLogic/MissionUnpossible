@@ -50,26 +50,26 @@ function f:CheckMission(accurate)
 	local missions = C_Garrison.GetAvailableMissions()
 	local curtime = time()
 	local missionavail = {}
-	
+
 	for _,v in pairs(missions) do
 	--print(v["name"]);
 		missionavail[v["missionID"]]=1
 		--if(v["name"]=="Worth Its Weight") then
 		--	print(v["missionID"]);
 		--end
-		
+
 		if not save[pname][v["missionID"]] then
 			--print("doing");
 			save[pname][v["missionID"]] = {};
 			save[pname][v["missionID"]]["time"] = curtime;
 			save[pname][v["missionID"]]["accurate"] = accurate;
 		end
-	
+
 	end
 	--event fires on reload or login with 1 mission avail, then 2 etc so wait at least 20 seconds before wiping missions
-	
-	
-	
+
+
+
 end
 
 
@@ -79,13 +79,13 @@ function f:HideAllTraits()
 		for _,v2 in pairs(v) do
 			v2:Hide();
 		end
-	
+
 	end
 end
 
 function f:CreateCounter(missionid)
 
-	
+
 	counters = {};
 	addfollower[missionid] = {};
 	local mission_counter = C_Garrison.GetBuffedFollowersForMission(missionid);
@@ -100,7 +100,7 @@ function f:CreateCounter(missionid)
 				counters[v2["name"]][k] = false;
 			end
 		end
-	
+
 	end
 	--print_r(counters);
 end
@@ -116,7 +116,7 @@ local function checkemptyavail(tabl)
 		if(v==false) then
 			--continue;
 			return 1;
-		
+
 		end;
 	end
 	return 0;
@@ -128,17 +128,17 @@ function f:CheckCounter(trait,missionid)
 		return 0;
 	else
 		local lastfollower = "";
-		
+
 		for k,v in pairs(counters[trait]) do
 			--if not on mission directly return otherwise check if there is one not on mission
 			if(v==false) then
 				counters[trait][k] = nil;
 				addfollower[missionid][trait] = k;
 				return 2;
-			else 
+			else
 				lastfollower = k;
 			end
-			
+
 		end
 		counters[trait][lastfollower] = nil;
 		return 1;
@@ -151,16 +151,16 @@ end
 function f:CheckMoreThanOneCounter(missionid)
 	for k,v in pairs(addfollower[missionid]) do
 		if(checkemptyavail(counters[k])==1) then
-			addfollower[missionid][k] = nil;		
+			addfollower[missionid][k] = nil;
 		end
-	
+
 	end
 
 end
 
 function f:GarrisonMissionList_Update()
 	--traiticons = {};
-	
+
 	local missions;
 	local self = GarrisonMissionFrame.MissionTab.MissionList;
 	if (self.showInProgress) then
@@ -179,21 +179,21 @@ function f:GarrisonMissionList_Update()
 			local index = offset + i; -- adjust index
 			if ( index <= numMissions) then
 				local mission = missions[index];
-				
+
 				if(ns.config["TimeOnMission"]==true or ns.config["FollowerRequired"]==true) then
-				
+
 					if not (button.extraEnhancedText) then
 						button.extraEnhancedText = button:CreateFontString();
 						button.extraEnhancedText:SetFont("Fonts\\FRIZQT__.ttf", 12)
 						button.extraEnhancedText:SetPoint("BOTTOMLEFT", 165, 5);
-						
+
 					end
 					button.extraEnhancedText:Show();
 					local extratext="";
 					if(ns.config["TimeOnMission"] == true) then
 						extratext=L.MISSION_AVAILABLE..": ";
 						local timeon = time()-save[pname][mission['missionID']]['time']
-						
+
 						if timeon<60 then
 							extratext = extratext..timeon.."s";
 						elseif timeon < 3600 then
@@ -204,10 +204,10 @@ function f:GarrisonMissionList_Update()
 							extratext = extratext..hours.."h "..minutes.."m";
 						end
 						if (save[pname][mission['missionID']]["accurate"] == false) then
-							extratext = extratext.."*";					
+							extratext = extratext.."*";
 						end
 						extratext = extratext.."  ";
-						
+
 					end
 					if(ns.config["FollowerRequired"] == true) then
 						extratext = extratext..L.FOLLOWER_REQUIRED..": "..mission['numFollowers'];
@@ -217,22 +217,22 @@ function f:GarrisonMissionList_Update()
 
 					if (button.extraEnhancedText~=nil) then
 						button.extraEnhancedText:Hide();
-					end					
-					
+					end
+
 				end
-				
-				
+
+
 				if(ns.config["CounterTraits"]==true) then
-				
+
 					f:CreateCounter(mission['missionID']);
-					if not traiticons[mission['missionID']] then 
+					if not traiticons[mission['missionID']] then
 						traiticons[mission['missionID']] = {}
 					end
-					
+
 					local missionbosses = select(8,C_Garrison.GetMissionInfo(mission['missionID']));
 					local buttoncount = 1;
 					for _,v in pairs(missionbosses) do
-						
+
 						for _,v2 in pairs(v["mechanics"]) do
 							--print_r(v2);
 							if not traiticons[mission['missionID']][buttoncount] then
@@ -240,14 +240,14 @@ function f:GarrisonMissionList_Update()
 								traiticons[mission['missionID']][buttoncount]   = CreateFrame("Frame", nil, button, "GarrisonMissionEnemyLargeMechanicTemplate");
 								traiticons[mission['missionID']][buttoncount].highlight = traiticons[mission['missionID']][buttoncount]:CreateTexture();
 							end
-							
+
 							local cancounter = f:CheckCounter(v2["name"],mission['missionID']);
-							
-							
-						
-							
+
+
+
+
 							traiticons[mission['missionID']][buttoncount]:SetParent(button);
-							
+
 							traiticons[mission['missionID']][buttoncount].highlight:SetPoint("BOTTOM",traiticons[mission['missionID']][buttoncount], "BOTTOM", 0, -26);
 							traiticons[mission['missionID']][buttoncount].highlight:SetSize(24,24);
 							if(cancounter==0) then
@@ -260,7 +260,7 @@ function f:GarrisonMissionList_Update()
 							traiticons[mission['missionID']][buttoncount].highlight:Show();
 							traiticons[mission['missionID']][buttoncount].Icon:SetTexture(v2["icon"]);
 							if(buttoncount == 1) then
-							
+
 								traiticons[mission['missionID']][buttoncount]:SetPoint("LEFT",button.Rewards[mission['numRewards']], "LEFT", -40, 0);
 							else
 								traiticons[mission['missionID']][buttoncount]:SetPoint("LEFT",traiticons[mission['missionID']][buttoncount-1], "LEFT", -40, 0);
@@ -268,8 +268,8 @@ function f:GarrisonMissionList_Update()
 
 							traiticons[mission['missionID']][buttoncount]:Show();
 							buttoncount=buttoncount+1
-							
-							
+
+
 						end
 					end
 					f:CheckMoreThanOneCounter(mission['missionID']);
@@ -288,7 +288,7 @@ function f:ScanForRemoval()
 		if not missionavail[k] then
 
 			f:RemoveMission(k);
-			
+
 		end
 	end
 
@@ -296,19 +296,18 @@ end
 
 function f:RemoveMission(id)
 	save[pname][id] = nil;
-	
+
 end
 
 function f:doscroll(...)
 	old_scroll(...);
 	 f:GarrisonMissionList_Update();
-	
+
 end
 
 local function UpdateFollowerTimeLeft(self)
-	if(ns.config["ShowTimeLeft"]==false) then
-		return;
-	end
+	if not ns.config["ShowTimeLeft"] then return end
+
 	local followerFrame = self;
 	local followers = followerFrame.FollowerList.followers;
 	local followersList = followerFrame.FollowerList.followersList;
@@ -329,39 +328,32 @@ local function UpdateFollowerTimeLeft(self)
 				local found = false;
 				for _,v in pairs(inprogress)  do
 					for _,v2 in pairs(v.followers) do
-						
+
 						if (v2 == follower.followerID) then
-							
+
 							button.Status:SetText(follower.status.." ("..v.timeLeft..")");
 							found = true;
 							break;
 						end
-						
+
 					end
-					if(found == true) then
-						break;
-					end
+					if found then break end
 				end
 			end
 		end
 	end
-	
-	
-
-
 end
 
 local function ShowMission(mission)
-	if(ns.config["AutoPlace"]==false) then
-		return;
-	end
+	if not ns.config["AutoPlace"] then return end
+
 	local i = 1;
 	for _,k in pairs(addfollower[mission['missionID']]) do
 		local followerFrame = GarrisonMissionFrame.MissionTab.MissionPage.Followers[i];
 		local followerInfo = C_Garrison.GetFollowerInfo(k);
 		GarrisonMissionPage_SetFollower(followerFrame, followerInfo);
 		i=i+1;
-		--C_Garrison.AddFollowerToMission(mission['missionID'],k);	
+		--C_Garrison.AddFollowerToMission(mission['missionID'],k);
 	end
 end
 
@@ -372,45 +364,37 @@ end
 
 local function FollowerRightClick (...)
 	local MISSION_PAGE_FRAME = GarrisonMissionFrame.MissionTab.MissionPage;
-	local self,button = ...;	
-	if ( MISSION_PAGE_FRAME:IsVisible() and MISSION_PAGE_FRAME.missionInfo and button == "RightButton") then
-		
-		if(self.info.status == nil) then
-			GarrisonMissionPage_AddFollower(self.id);
-		elseif(self.info.status == GARRISON_FOLLOWER_IN_PARTY) then
+	local self,button = ...;
+	if MISSION_PAGE_FRAME:IsVisible() and MISSION_PAGE_FRAME.missionInfo and button == "RightButton" then
+		if not self.info.status then
+			GarrisonMissionPage_AddFollower(self.id)
+		elseif self.info.status == GARRISON_FOLLOWER_IN_PARTY then
 			for i = 1, #MISSION_PAGE_FRAME.Followers do
-			local followerFrame = MISSION_PAGE_FRAME.Followers[i];
-			if ( followerFrame.info ) then
-			
-				if(followerFrame.info.followerID == self.id) then
-					GarrisonMissionPage_ClearFollower(followerFrame,true);
-					break;
+				local followerFrame = MISSION_PAGE_FRAME.Followers[i]
+				if followerFrame.info then
+
+					if followerFrame.info.followerID == self.id then
+						GarrisonMissionPage_ClearFollower(followerFrame,true)
+						break
+					end
 				end
 			end
-	end
 		else
-			return oldfollowerrightclick(...);
+			return oldfollowerrightclick(...)
 		end
-		
-		
 	else
-		return oldfollowerrightclick(...);
-	end	
-
-
+		return oldfollowerrightclick(...)
+	end
 end
 
 function f:ActivateFollowerHook()
-	
-	GarrisonFollowerListButton_OnClick = FollowerRightClick;
-	f.rightclickhook = true;
-
+	GarrisonFollowerListButton_OnClick = FollowerRightClick
+	f.rightclickhook = true
 end
 
 function f:DeactivateFollowerHook()
-	
-	GarrisonFollowerListButton_OnClick = oldfollowerrightclick;
-	f.rightclickhook = false;
+	GarrisonFollowerListButton_OnClick = oldfollowerrightclick
+	f.rightclickhook = false
 end
 
 
