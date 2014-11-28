@@ -349,11 +349,6 @@ function ns.OnLoad()
 	f:RegisterEvent("GARRISON_MISSION_LIST_UPDATE")
 	f:RegisterEvent("GARRISON_MISSION_STARTED")
 	f:RegisterEvent("PLAYER_LOGOUT")
-end
-
-
-function ns.ADDON_LOADED(event, addon)
-	if addon ~= "Blizzard_GarrisonUI" then return end
 
 	old_scroll = GarrisonMissionFrame.MissionTab.MissionList.listScroll.update
 	GarrisonMissionFrame.MissionTab.MissionList.listScroll.update = f.doscroll

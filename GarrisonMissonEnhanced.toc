@@ -5,6 +5,9 @@
 ## Version: 1.6.0
 ## Notes: Improves the Garrison Missons
 
+## LoadOnDemand: 1
+## LoadWith: Blizzard_GarrisonUI
+
 externals\events.lua
 
 localisation\locale_enUS.lua
