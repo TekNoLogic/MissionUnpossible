@@ -256,33 +256,20 @@ function f:doscroll(...)
 end
 
 local function UpdateFollowerTimeLeft(self)
-	local followerFrame = self;
-	local followers = followerFrame.FollowerList.followers;
-	local followersList = followerFrame.FollowerList.followersList;
-	local numFollowers = #followersList;
-	local scrollFrame = followerFrame.FollowerList.listScroll;
-	local offset = HybridScrollFrame_GetOffset(scrollFrame);
-	local buttons = scrollFrame.buttons;
-	local showCounters = followerFrame.FollowerList.showCounters;
-	local canExpand = followerFrame.FollowerList.canExpand;
-	local inprogress = C_Garrison.GetInProgressMissions();
-	for i=1,#buttons do
-		local button = buttons[i];
-		local index = offset + i; -- adjust index
-		if index <= numFollowers then
-			local follower = followers[followersList[index]];
+	local followers = self.FollowerList.followers
+	local followersList = self.FollowerList.followersList
+
+	local inprogress = C_Garrison.GetInProgressMissions()
+
+	local scrollFrame = self.FollowerList.listScroll
+	local offset = HybridScrollFrame_GetOffset(scrollFrame)
+	for i,button in pairs(scrollFrame.buttons) do
+		local index = offset + i
+		if index <= #followersList then
+			local follower = followers[followersList[index]]
 			if (follower.status == GARRISON_FOLLOWER_ON_MISSION) then
-				local found = false
-				for _,v in pairs(inprogress) do
-					for _,v2 in pairs(v.followers) do
-						if v2 == follower.followerID then
-							button.Status:SetText(follower.status.." ("..v.timeLeft..")")
-							found = true
-							break
-						end
-					end
-					if found then break end
-				end
+				local timeLeft = ns.GetFollowerTimeLeft(follower.followerID)
+				button.Status:SetText(follower.status.. " (".. timeLeft.. ")")
 			end
 		end
 	end

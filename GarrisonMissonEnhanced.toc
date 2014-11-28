@@ -22,3 +22,4 @@ localisation\locale_zhTW.lua
 
 GarrisonMissonEnhanced.lua
 Config.lua
+Followers.lua
