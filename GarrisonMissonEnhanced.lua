@@ -14,7 +14,6 @@ local counters = {};
 local addfollower = {};
 local oldfollowerrightclick = "";
 f.version = 1;
-f.rightclickhook = false;
 GarrionMissonEnhanceConfig = {};
 
 local function round(num, idp)
@@ -339,16 +338,6 @@ local function FollowerRightClick (...)
 	end
 end
 
-function f:ActivateFollowerHook()
-	GarrisonFollowerListButton_OnClick = FollowerRightClick
-	f.rightclickhook = true
-end
-
-function f:DeactivateFollowerHook()
-	GarrisonFollowerListButton_OnClick = oldfollowerrightclick
-	f.rightclickhook = false
-end
-
 
 function ns.OnLoad()
 	pname = GetUnitName("player", false).."-"..GetRealmName()
@@ -375,11 +364,9 @@ function ns.ADDON_LOADED(event, addon)
 	hooksecurefunc("GarrisonMissionList_Update", f.GarrisonMissionList_Update)
 	hooksecurefunc("GarrisonFollowerList_Update", UpdateFollowerTimeLeft)
 	hooksecurefunc("GarrisonMissionPage_ShowMission", ShowMission)
-	oldfollowerrightclick = GarrisonFollowerListButton_OnClick
 
-	if ns.config["QuickAssign"] then
-		f:ActivateFollowerHook()
-	end
+	oldfollowerrightclick = GarrisonFollowerListButton_OnClick
+	GarrisonFollowerListButton_OnClick = FollowerRightClick
 end
 
 

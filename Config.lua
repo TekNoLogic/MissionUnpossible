@@ -135,24 +135,12 @@ function config:Init()
 		ns.config = GarrisonMissonEnhancedLocalConfig;
 	end
 	config:SetCurrentConfig();
-end
 
-function config:hookhandler(enabled)
-	if(ns.main.rightclickhook == true and enabled==false) then
-		ns.main:DeactivateFollowerHook();
-	elseif(ns.main.rightclickhook == false and enabled == true) then
-		if (IsAddOnLoaded("Blizzard_GarrisonUI")) then
-			ns.main:ActivateFollowerHook();
-		end
-	end
 end
 
 function config:SetCurrentConfig()
 	for key, val in pairs(ns.config) do
 		_G["GarrisonMissionEnhanced_"..key]:SetChecked(val);
-		if(key == "QuickAssign") then
-			config:hookhandler(val);
-		end
 	end
 end
 
@@ -172,8 +160,5 @@ function config:ChangeState()
 		config:SetCurrentConfig();
 	else
 		ns.config[self.id] = self:GetChecked();
-		if(self.id=="QuickAssign") then
-			config:hookhandler(self:GetChecked());
-		end
 	end
 end
