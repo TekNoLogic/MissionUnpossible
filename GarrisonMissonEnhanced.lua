@@ -12,7 +12,7 @@ local counters = {};
 local addfollower = {};
 local oldfollowerrightclick = "";
 f.version = 1;
-GarrionMissonEnhanceConfig = {};
+
 
 local function round(num, idp)
 	local mult = 10^(idp or 0)
@@ -148,91 +148,78 @@ function f:GarrisonMissionList_Update()
 			if index <= #missions then
 				local mission = missions[index];
 
-				if ns.config["TimeOnMission"] or ns.config["FollowerRequired"] then
-					if not button.extraEnhancedText then
-						button.extraEnhancedText = button:CreateFontString();
-						button.extraEnhancedText:SetFont("Fonts\\FRIZQT__.ttf", 12)
-						button.extraEnhancedText:SetPoint("BOTTOMLEFT", 165, 5)
-					end
+				if not button.extraEnhancedText then
+					button.extraEnhancedText = button:CreateFontString();
+					button.extraEnhancedText:SetFont("Fonts\\FRIZQT__.ttf", 12)
+					button.extraEnhancedText:SetPoint("BOTTOMLEFT", 165, 5)
+				end
 
-					button.extraEnhancedText:Show();
-					local extratext="";
-					if ns.config["TimeOnMission"] then
-						extratext=L.MISSION_AVAILABLE..": ";
-						local timeon = time()-save[mission['missionID']]['time']
+				button.extraEnhancedText:Show();
+				local extratext=L.MISSION_AVAILABLE..": ";
+				local timeon = time()-save[mission['missionID']]['time']
 
-						if timeon<60 then
-							extratext = extratext..timeon.."s";
-						elseif timeon < 3600 then
-							extratext = extratext..round(timeon/60,0).."m";
-						else
-							local hours = round(timeon/60/60);
-							local minutes = round((timeon/60) % 60);
-							extratext = extratext..hours.."h "..minutes.."m";
-						end
-						if (save[mission['missionID']]["accurate"] == false) then
-							extratext = extratext.."*";
-						end
-						extratext = extratext.."  ";
-					end
-					if ns.config["FollowerRequired"] then
-						extratext = extratext..L.FOLLOWER_REQUIRED..": "..mission['numFollowers'];
-					end
-					button.extraEnhancedText:SetText(extratext);
+				if timeon<60 then
+					extratext = extratext..timeon.."s";
+				elseif timeon < 3600 then
+					extratext = extratext..round(timeon/60,0).."m";
 				else
+					local hours = round(timeon/60/60);
+					local minutes = round((timeon/60) % 60);
+					extratext = extratext..hours.."h "..minutes.."m";
+				end
+				if (save[mission['missionID']]["accurate"] == false) then
+					extratext = extratext.."*";
+				end
+				extratext = extratext.."  ";
 
-					if button.extraEnhancedText then
-						button.extraEnhancedText:Hide()
-					end
+				extratext = extratext..L.FOLLOWER_REQUIRED..": "..mission['numFollowers'];
+				button.extraEnhancedText:SetText(extratext);
+
+				f:CreateCounter(mission['missionID']);
+				if not traiticons[mission['missionID']] then
+					traiticons[mission['missionID']] = {}
 				end
 
-				if ns.config["CounterTraits"] then
-					f:CreateCounter(mission['missionID']);
-					if not traiticons[mission['missionID']] then
-						traiticons[mission['missionID']] = {}
-					end
+				local missionbosses = select(8,C_Garrison.GetMissionInfo(mission['missionID']));
+				local buttoncount = 1;
+				for _,v in pairs(missionbosses) do
 
-					local missionbosses = select(8,C_Garrison.GetMissionInfo(mission['missionID']));
-					local buttoncount = 1;
-					for _,v in pairs(missionbosses) do
-
-						for _,v2 in pairs(v["mechanics"]) do
-							--print_r(v2);
-							if not traiticons[mission['missionID']][buttoncount] then
-								traiticons[mission['missionID']][buttoncount] = {};
-								traiticons[mission['missionID']][buttoncount]   = CreateFrame("Frame", nil, button, "GarrisonMissionEnemyLargeMechanicTemplate");
-								traiticons[mission['missionID']][buttoncount].highlight = traiticons[mission['missionID']][buttoncount]:CreateTexture();
-							end
-
-							local cancounter = f:CheckCounter(v2["name"],mission['missionID']);
-
-							traiticons[mission['missionID']][buttoncount]:SetParent(button);
-
-							traiticons[mission['missionID']][buttoncount].highlight:SetPoint("BOTTOM",traiticons[mission['missionID']][buttoncount], "BOTTOM", 0, -26);
-							traiticons[mission['missionID']][buttoncount].highlight:SetSize(24,24);
-							if(cancounter==0) then
-								traiticons[mission['missionID']][buttoncount].highlight:SetTexture("Interface\\AddOns\\GarrisonMissonEnhanced\\redglow");
-							elseif(cancounter==1) then
-								traiticons[mission['missionID']][buttoncount].highlight:SetTexture("Interface\\Garrison\\Garr_TimerGlow.blp");
-							else
-								traiticons[mission['missionID']][buttoncount].highlight:SetTexture("Interface\\Garrison\\Garr_TimerGlow-Upgrade.blp");
-							end
-							traiticons[mission['missionID']][buttoncount].highlight:Show();
-							traiticons[mission['missionID']][buttoncount].Icon:SetTexture(v2["icon"]);
-							if(buttoncount == 1) then
-
-								traiticons[mission['missionID']][buttoncount]:SetPoint("LEFT",button.Rewards[mission['numRewards']], "LEFT", -40, 0);
-							else
-								traiticons[mission['missionID']][buttoncount]:SetPoint("LEFT",traiticons[mission['missionID']][buttoncount-1], "LEFT", -40, 0);
-							end
-
-							traiticons[mission['missionID']][buttoncount]:Show();
-							buttoncount=buttoncount+1
-
+					for _,v2 in pairs(v["mechanics"]) do
+						--print_r(v2);
+						if not traiticons[mission['missionID']][buttoncount] then
+							traiticons[mission['missionID']][buttoncount] = {};
+							traiticons[mission['missionID']][buttoncount]   = CreateFrame("Frame", nil, button, "GarrisonMissionEnemyLargeMechanicTemplate");
+							traiticons[mission['missionID']][buttoncount].highlight = traiticons[mission['missionID']][buttoncount]:CreateTexture();
 						end
+
+						local cancounter = f:CheckCounter(v2["name"],mission['missionID']);
+
+						traiticons[mission['missionID']][buttoncount]:SetParent(button);
+
+						traiticons[mission['missionID']][buttoncount].highlight:SetPoint("BOTTOM",traiticons[mission['missionID']][buttoncount], "BOTTOM", 0, -26);
+						traiticons[mission['missionID']][buttoncount].highlight:SetSize(24,24);
+						if(cancounter==0) then
+							traiticons[mission['missionID']][buttoncount].highlight:SetTexture("Interface\\AddOns\\GarrisonMissonEnhanced\\redglow");
+						elseif(cancounter==1) then
+							traiticons[mission['missionID']][buttoncount].highlight:SetTexture("Interface\\Garrison\\Garr_TimerGlow.blp");
+						else
+							traiticons[mission['missionID']][buttoncount].highlight:SetTexture("Interface\\Garrison\\Garr_TimerGlow-Upgrade.blp");
+						end
+						traiticons[mission['missionID']][buttoncount].highlight:Show();
+						traiticons[mission['missionID']][buttoncount].Icon:SetTexture(v2["icon"]);
+						if(buttoncount == 1) then
+
+							traiticons[mission['missionID']][buttoncount]:SetPoint("LEFT",button.Rewards[mission['numRewards']], "LEFT", -40, 0);
+						else
+							traiticons[mission['missionID']][buttoncount]:SetPoint("LEFT",traiticons[mission['missionID']][buttoncount-1], "LEFT", -40, 0);
+						end
+
+						traiticons[mission['missionID']][buttoncount]:Show();
+						buttoncount=buttoncount+1
+
 					end
-					f:CheckMoreThanOneCounter(mission['missionID']);
 				end
+				f:CheckMoreThanOneCounter(mission['missionID']);
 			end
 		end
 	end
@@ -276,9 +263,7 @@ local function UpdateFollowerTimeLeft(self)
 end
 
 local function ShowMission(mission)
-	if not ns.config["AutoPlace"] then return end
-
-	local i = 1;
+	local i = 1
 	for _,k in pairs(addfollower[mission['missionID']]) do
 		local followerFrame = GarrisonMissionFrame.MissionTab.MissionPage.Followers[i];
 		local followerInfo = C_Garrison.GetFollowerInfo(k);
@@ -324,8 +309,6 @@ function ns.OnLoad()
 	f:RegisterEvent("GARRISON_MISSION_LIST_UPDATE")
 	f:RegisterEvent("GARRISON_MISSION_STARTED")
 	f:RegisterEvent("PLAYER_LOGOUT")
-
-	GarrionMissonEnhanceConfig:Init()
 end
 
 
