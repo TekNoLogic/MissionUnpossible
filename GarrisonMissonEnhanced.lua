@@ -256,8 +256,6 @@ function f:doscroll(...)
 end
 
 local function UpdateFollowerTimeLeft(self)
-	if not ns.config["ShowTimeLeft"] then return end
-
 	local followerFrame = self;
 	local followers = followerFrame.FollowerList.followers;
 	local followersList = followerFrame.FollowerList.followersList;

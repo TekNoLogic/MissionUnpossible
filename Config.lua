@@ -1,7 +1,7 @@
 local config = CreateFrame("Frame");
 local config2 = CreateFrame("Frame");
 GarrionMissonEnhanceConfig = config;
-local defaultconf = {["GlobalConf"]=true,["TimeOnMission"]=true,["CounterTraits"]=true,["AutoPlace"]=true,["ShowTimeLeft"]=true,["FollowerRequired"]=true,["QuickAssign"]=true};
+local defaultconf = {["GlobalConf"]=true,["TimeOnMission"]=true,["CounterTraits"]=true,["AutoPlace"]=true,["FollowerRequired"]=true,["QuickAssign"]=true};
 local ns = select( 2, ... )
 local L = ns.L;
 ns.config = {};
@@ -66,17 +66,10 @@ function config:Init()
 	AutoPlaceSimpleExplain:SetJustifyH("LEFT");
 	AutoPlaceSimpleExplain:SetText( L.CONFIG_AUTO_PLACE_SIMPLE_EXPLAIN);
 
-	local ShowTimeLeft = CreateFrame( "CheckButton", "GarrisonMissionEnhanced_ShowTimeLeft", config, "InterfaceOptionsCheckButtonTemplate" );
-	 config.ShowTimeLeft = ShowTimeLeft;
-	 ShowTimeLeft.id = "ShowTimeLeft";
-	 ShowTimeLeft:SetPoint( "TOPLEFT", AutoPlaceSimpleExplain, "BOTTOMLEFT", 0, -16);
-	 ShowTimeLeft:SetScript("onClick",config.ChangeState);
-	 _G[ ShowTimeLeft:GetName().."Text" ]:SetText( "|c00dfb802"..L.CONFIG_SHOW_TIME_LEFT );
-
 	 local FollowerRequired = CreateFrame( "CheckButton", "GarrisonMissionEnhanced_FollowerRequired", config, "InterfaceOptionsCheckButtonTemplate" );
 	 config.FollowerRequired = FollowerRequired;
 	 FollowerRequired.id = "FollowerRequired";
-	 FollowerRequired:SetPoint( "TOPLEFT", ShowTimeLeft, "BOTTOMLEFT", 0, -16);
+	 FollowerRequired:SetPoint( "TOPLEFT", AutoPlaceSimpleExplain, "BOTTOMLEFT", 0, -16);
 	 FollowerRequired:SetScript("onClick",config.ChangeState);
 	 _G[FollowerRequired:GetName().."Text" ]:SetText( "|c00dfb802"..L.CONFIG_FOLLOWER_REQUIRED );
 
