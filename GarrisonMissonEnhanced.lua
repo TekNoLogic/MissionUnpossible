@@ -2,63 +2,12 @@
 local myname, ns = ...
 
 local L = ns.L;
-local f  = CreateFrame("frame",nil,UIParent);
-ns.main = f;
-local save = {}
-local starttime = time();
+local f  = CreateFrame("frame")
 local old_scroll;
 local traiticons = {};
 local counters = {};
 local addfollower = {};
-local oldfollowerrightclick = "";
-f.version = 1;
-
-
-local function round(num, idp)
-	local mult = 10^(idp or 0)
-	return math.floor(num * mult + 0.5) / mult
-end
-
-local function print_r (t, indent, done)
-  done = done or {}
-  indent = indent or ''
-  local nextIndent -- Storage for next indentation value
-  for key, value in pairs (t) do
-    if type (value) == "table" and not done [value] then
-      nextIndent = nextIndent or (indent .. string.rep(' ',string.len(tostring (key))+2))
-          -- Shortcut conditional allocation
-      done [value] = true
-      print (indent .. "[" .. tostring (key) .. "] => Table {");
-      print  (nextIndent .. "{");
-      print_r (value, nextIndent .. string.rep(' ',2), done)
-      print  (nextIndent .. "}");
-    else
-      print  (indent .. "[" .. tostring (key) .. "] => " .. tostring (value).."")
-    end
-  end
-end
-
-function f:CheckMission(accurate)
-	local missions = C_Garrison.GetAvailableMissions()
-	local curtime = time()
-	local missionavail = {}
-
-	for _,v in pairs(missions) do
-	--print(v["name"]);
-		missionavail[v["missionID"]]=1
-		--if(v["name"]=="Worth Its Weight") then
-		--	print(v["missionID"]);
-		--end
-
-		if not save[v["missionID"]] then
-			--print("doing");
-			save[v["missionID"]] = {};
-			save[v["missionID"]]["time"] = curtime;
-			save[v["missionID"]]["accurate"] = accurate;
-		end
-	end
-	--event fires on reload or login with 1 mission avail, then 2 etc so wait at least 20 seconds before wiping missions
-end
+local oldfollowerrightclick
 
 
 function f:HideAllTraits()
@@ -228,18 +177,6 @@ function f:GarrisonMissionList_Update()
 	end
 end
 
-function f:ScanForRemoval()
-	for k,_ in pairs(save) do
-		if not missionavail[k] then
-			f:RemoveMission(k)
-		end
-	end
-end
-
-function f:RemoveMission(id)
-	save[id] = nil
-end
-
 function f:doscroll(...)
 	old_scroll(...)
 	f:GarrisonMissionList_Update()
@@ -307,8 +244,6 @@ end
 
 
 function ns.OnLoad()
-	f:CheckMission(false)
-
 	f:RegisterEvent("GARRISON_MISSION_LIST_UPDATE")
 	f:RegisterEvent("GARRISON_MISSION_STARTED")
 	f:RegisterEvent("PLAYER_LOGOUT")
@@ -324,19 +259,11 @@ function ns.OnLoad()
 end
 
 
-ns.RegisterEvent("PLAYER_LOGOUT")
-function ns.PLAYER_LOGOUT()
-	f:ScanForRemoval()
-end
+-- ns.RegisterEvent("GARRISON_MISSION_LIST_UPDATE")
+-- function ns.GARRISON_MISSION_LIST_UPDATE()
+-- end
 
 
-ns.RegisterEvent("GARRISON_MISSION_LIST_UPDATE")
-function ns.GARRISON_MISSION_LIST_UPDATE()
-	f:CheckMission(true)
-end
-
-
-ns.RegisterEvent("GARRISON_MISSION_STARTED")
-function ns.GARRISON_MISSION_STARTED(event, missionID)
-	f:RemoveMission(missionid)
-end
+-- ns.RegisterEvent("GARRISON_MISSION_STARTED")
+-- function ns.GARRISON_MISSION_STARTED(event, missionID)
+-- end
