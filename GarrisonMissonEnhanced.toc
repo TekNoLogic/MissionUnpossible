@@ -10,15 +10,5 @@
 
 externals\events.lua
 
-localisation\locale_enUS.lua
-localisation\locale_deDE.lua
-localisation\locale_frFR.lua
-localisation\locale_koKR.lua
-localisation\locale_esMX.lua
-localisation\locale_ruRU.lua
-localisation\locale_zhCN.lua
-localisation\locale_esES.lua
-localisation\locale_zhTW.lua
-
 GarrisonMissonEnhanced.lua
 Followers.lua
