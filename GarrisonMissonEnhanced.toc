@@ -1,0 +1,25 @@
+## Interface: 60000
+## Title: Garrison Mission Enhanced
+## Author: Dorwido
+## Version: 1.6.0
+## Notes: Improves the Garrison Missons
+## SavedVariables: GarrisonMissonEnhancedSave,GarrisonMissonEnhancedGlobalConfig
+## SavedVariablesPerCharacter: GarrisonMissonEnhancedLocalConfig
+## X-Curse-Packaged-Version: v1.6.0
+## X-Curse-Project-Name: Garrison Mission Enhanced
+## X-Curse-Project-ID: garrison-misson-nhanced
+## X-Curse-Repository-ID: wow/garrison-misson-nhanced/mainline
+
+
+localisation\locale_enUS.lua
+localisation\locale_deDE.lua
+localisation\locale_frFR.lua
+localisation\locale_koKR.lua
+localisation\locale_esMX.lua
+localisation\locale_ruRU.lua
+localisation\locale_zhCN.lua
+localisation\locale_esES.lua
+localisation\locale_zhTW.lua
+GarrisonMissonEnhanced.lua
+GarrisonMissonEnhancedConfig.lua
+
