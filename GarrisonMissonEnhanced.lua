@@ -1,4 +1,6 @@
-local _,ns = ...;
+
+local myname, ns = ...
+
 local L = ns.L;
 local f  = CreateFrame("frame",nil,UIParent);
 ns.main = f;
@@ -18,14 +20,6 @@ local function round(num, idp)
 		local mult = 10^(idp or 0)
 		return math.floor(num * mult + 0.5) / mult
 end
-
-function f:OnLoad()
-    f:SetScript("OnEvent",f.EventHandler);
-	
-	f:RegisterEvent("ADDON_LOADED");
-end
-
-
 
 
 local function print_r (t, indent, done)
@@ -420,73 +414,52 @@ function f:DeactivateFollowerHook()
 end
 
 
-function f:EventHandler(event,...)
-	
-	if(event=="GARRISON_MISSION_LIST_UPDATE") then
-		
-		f:CheckMission(true);
-	
-	elseif(event=="GARRISON_MISSION_STARTED") then
-		local missionid = ...;
-		f:RemoveMission(missionid);
-		
-	elseif(event=="PLAYER_LOGOUT") then
-		f:ScanForRemoval();
-	elseif(event=="ADDON_LOADED") then
-		local arg1 = ...;
-		--print (arg1);
-		if(arg1 == "GarrisonMissonEnhanced") then	
-			
-			pname = GetUnitName("player", false).."-"..GetRealmName();
-			save = GarrisonMissonEnhancedSave;
-			if not GarrisonMissonEnhancedSave then 
-				GarrisonMissonEnhancedSave = {};
-				
-				
-			end
-			if not GarrisonMissonEnhancedSave[pname] then
-				GarrisonMissonEnhancedSave[pname] = {};
-				
-			end
-			
-			save = GarrisonMissonEnhancedSave;
-			f:CheckMission(false);
-			--f:UnregisterEvent("ADDON_LOADED");
-			f:RegisterEvent("GARRISON_MISSION_LIST_UPDATE");
-			f:RegisterEvent("GARRISON_MISSION_STARTED");
-			f:RegisterEvent("PLAYER_LOGOUT");
-			GarrionMissonEnhanceConfig:Init();
-		elseif(arg1=="Blizzard_GarrisonUI") then
-			--old_GarrisonMissionList_Update = GarrisonMissionList_Update;
-			--GarrisonMissionList_Update = f.GarrisonMissionList_Update;
-			old_scroll = GarrisonMissionFrame.MissionTab.MissionList.listScroll.update;
-			GarrisonMissionFrame.MissionTab.MissionList.listScroll.update = f.doscroll;
-			hooksecurefunc("GarrisonMissionList_Update", f.GarrisonMissionList_Update);
-			hooksecurefunc("GarrisonFollowerList_Update",UpdateFollowerTimeLeft);
-			hooksecurefunc("GarrisonMissionPage_ShowMission",ShowMission);
-			--hooksecurefunc("GarrisonMissionFrame_OnLoad",MissionFrameOnload);
-			--hooksecurefunc("GarrisonMissionComplete_Initialize",MissionComplete);
-			--add only hook if activated
-			oldfollowerrightclick = GarrisonFollowerListButton_OnClick;
-			if(ns.config["QuickAssign"] == true) then
-				f:ActivateFollowerHook();
-			end
-		
-		end
-	
-		
-	
-	end
-		
-	
-	
+function ns.OnLoad()
+	pname = GetUnitName("player", false).."-"..GetRealmName()
+
+	GarrisonMissonEnhancedSave = GarrisonMissonEnhancedSave or {}
+	GarrisonMissonEnhancedSave[pname] = GarrisonMissonEnhancedSave[pname] or {}
+	save = GarrisonMissonEnhancedSave
+
+	f:CheckMission(false)
+
+	f:RegisterEvent("GARRISON_MISSION_LIST_UPDATE")
+	f:RegisterEvent("GARRISON_MISSION_STARTED")
+	f:RegisterEvent("PLAYER_LOGOUT")
+
+	GarrionMissonEnhanceConfig:Init()
 end
 
 
+function ns.ADDON_LOADED(event, addon)
+	if addon ~= "Blizzard_GarrisonUI" then return end
+
+	old_scroll = GarrisonMissionFrame.MissionTab.MissionList.listScroll.update
+	GarrisonMissionFrame.MissionTab.MissionList.listScroll.update = f.doscroll
+	hooksecurefunc("GarrisonMissionList_Update", f.GarrisonMissionList_Update)
+	hooksecurefunc("GarrisonFollowerList_Update", UpdateFollowerTimeLeft)
+	hooksecurefunc("GarrisonMissionPage_ShowMission", ShowMission)
+	oldfollowerrightclick = GarrisonFollowerListButton_OnClick
+
+	if ns.config["QuickAssign"] then
+		f:ActivateFollowerHook()
+	end
+end
 
 
+ns.RegisterEvent("PLAYER_LOGOUT")
+function ns.PLAYER_LOGOUT()
+	f:ScanForRemoval()
+end
 
 
+ns.RegisterEvent("GARRISON_MISSION_LIST_UPDATE")
+function ns.GARRISON_MISSION_LIST_UPDATE()
+	f:CheckMission(true)
+end
 
 
-f:OnLoad();
+ns.RegisterEvent("GARRISON_MISSION_STARTED")
+function ns.GARRISON_MISSION_STARTED(event, missionID)
+	f:RemoveMission(missionid)
+end

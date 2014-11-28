@@ -8,6 +8,8 @@
 ## SavedVariables: GarrisonMissonEnhancedSave,GarrisonMissonEnhancedGlobalConfig
 ## SavedVariablesPerCharacter: GarrisonMissonEnhancedLocalConfig
 
+externals\events.lua
+
 localisation\locale_enUS.lua
 localisation\locale_deDE.lua
 localisation\locale_frFR.lua
