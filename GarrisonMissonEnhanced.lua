@@ -221,7 +221,6 @@ function f:GarrisonMissionList_Update()
 						--print_r(v2);
 						if not traiticons[mission['missionID']][buttoncount] then
 							local mechbutt = CreateFrame("Frame", nil, button, "GarrisonMissionEnemyLargeMechanicTemplate")
-							mechbutt.highlight = mechbutt:CreateTexture()
 
 							local label = mechbutt:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 							label:SetPoint("BOTTOM", 0, -16)
@@ -232,21 +231,11 @@ function f:GarrisonMissionList_Update()
 
 						traiticons[mission['missionID']][buttoncount].label:SetText(GetCounterText(v2["name"],mission['missionID']))
 
-						local cancounter = f:CheckCounter(v2["name"],mission['missionID']);
+						local cancounter = f:CheckCounter(v2["name"],mission['missionID'])
 
-						traiticons[mission['missionID']][buttoncount]:SetParent(button);
+						traiticons[mission['missionID']][buttoncount]:SetParent(button)
 
-						traiticons[mission['missionID']][buttoncount].highlight:SetPoint("BOTTOM",traiticons[mission['missionID']][buttoncount], "BOTTOM", 0, -26);
-						traiticons[mission['missionID']][buttoncount].highlight:SetSize(24,24);
-						if(cancounter==0) then
-							traiticons[mission['missionID']][buttoncount].highlight:SetTexture("Interface\\AddOns\\GarrisonMissonEnhanced\\redglow");
-						elseif(cancounter==1) then
-							traiticons[mission['missionID']][buttoncount].highlight:SetTexture("Interface\\Garrison\\Garr_TimerGlow.blp");
-						else
-							traiticons[mission['missionID']][buttoncount].highlight:SetTexture("Interface\\Garrison\\Garr_TimerGlow-Upgrade.blp");
-						end
-						traiticons[mission['missionID']][buttoncount].highlight:Hide()
-						traiticons[mission['missionID']][buttoncount].Icon:SetTexture(v2["icon"]);
+						traiticons[mission['missionID']][buttoncount].Icon:SetTexture(v2["icon"])
 						if(buttoncount == 1) then
 
 							traiticons[mission['missionID']][buttoncount]:SetPoint("LEFT",button.Rewards[mission['numRewards']], "LEFT", -40, 0);
