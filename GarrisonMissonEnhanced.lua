@@ -96,7 +96,7 @@ local function checkemptyavail(tabl)
 end
 
 function f:CheckCounter(trait,missionid)
-	if not counters[trait] or next(counters[trait]) then
+	if not counters[trait] or not next(counters[trait]) then
 		return 0
 	else
 		local lastfollower = "";
@@ -116,6 +116,39 @@ function f:CheckCounter(trait,missionid)
 		return 1;
 	end
 	return 0;
+end
+
+
+local inactive_statii = {
+	[GARRISON_FOLLOWER_ON_MISSION] = true,
+	[GARRISON_FOLLOWER_INACTIVE] = true,
+}
+local function GetCounterText(trait, missionid)
+	if not counters[trait] or not next(counters[trait]) then
+		return "|cff9d9d9d--"
+	else
+		local available, total = 0, 0
+
+		local buffed = C_Garrison.GetBuffedFollowersForMission(missionid);
+		for guid,buffs in pairs(buffed) do
+			for i,buff in pairs(buffs) do
+				if buff.name == trait then
+					total = total + 1
+
+					local status = C_Garrison.GetFollowerStatus(guid)
+					if not inactive_statii[status] then
+						available = available + 1
+					end
+				end
+			end
+		end
+
+		if available == 0 then
+			return "|cff9d9d9d".. available.. "/".. total
+		else
+			return available.. "/".. total
+		end
+	end
 end
 
 --C_Garrison.AddFollowerToMission
@@ -187,10 +220,17 @@ function f:GarrisonMissionList_Update()
 					for _,v2 in pairs(v["mechanics"]) do
 						--print_r(v2);
 						if not traiticons[mission['missionID']][buttoncount] then
-							traiticons[mission['missionID']][buttoncount] = {};
-							traiticons[mission['missionID']][buttoncount]   = CreateFrame("Frame", nil, button, "GarrisonMissionEnemyLargeMechanicTemplate");
-							traiticons[mission['missionID']][buttoncount].highlight = traiticons[mission['missionID']][buttoncount]:CreateTexture();
+							local mechbutt = CreateFrame("Frame", nil, button, "GarrisonMissionEnemyLargeMechanicTemplate")
+							mechbutt.highlight = mechbutt:CreateTexture()
+
+							local label = mechbutt:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+							label:SetPoint("BOTTOM", 0, -16)
+							mechbutt.label = label
+
+							traiticons[mission['missionID']][buttoncount] = mechbutt
 						end
+
+						traiticons[mission['missionID']][buttoncount].label:SetText(GetCounterText(v2["name"],mission['missionID']))
 
 						local cancounter = f:CheckCounter(v2["name"],mission['missionID']);
 
@@ -205,7 +245,7 @@ function f:GarrisonMissionList_Update()
 						else
 							traiticons[mission['missionID']][buttoncount].highlight:SetTexture("Interface\\Garrison\\Garr_TimerGlow-Upgrade.blp");
 						end
-						traiticons[mission['missionID']][buttoncount].highlight:Show();
+						traiticons[mission['missionID']][buttoncount].highlight:Hide()
 						traiticons[mission['missionID']][buttoncount].Icon:SetTexture(v2["icon"]);
 						if(buttoncount == 1) then
 
