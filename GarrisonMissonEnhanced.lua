@@ -2,15 +2,11 @@
 local myname, ns = ...
 
 local f = CreateFrame("frame")
-local old_scroll
 local counters = {}
-local addfollower = {}
-local oldfollowerrightclick
 
 
 function f:CreateCounter(missionid)
 	counters = {}
-	addfollower[missionid] = {}
 	local mission_counter = C_Garrison.GetBuffedFollowersForMission(missionid)
 	for k,v in pairs(mission_counter) do
 		for _,v2 in pairs(v) do
@@ -32,29 +28,6 @@ local function checkemptyavail(tabl)
 			return true
 		end
 	end
-end
-
-function f:CheckCounter(trait,missionid)
-	if not counters[trait] or not next(counters[trait]) then
-		return 0
-	else
-		local lastfollower = ""
-
-		for k,v in pairs(counters[trait]) do
-			--if not on mission directly return otherwise check if there is one not on mission
-			if(v==false) then
-				counters[trait][k] = nil;
-				addfollower[missionid][trait] = k;
-				return 2;
-			else
-				lastfollower = k;
-			end
-
-		end
-		counters[trait][lastfollower] = nil;
-		return 1;
-	end
-	return 0;
 end
 
 
@@ -121,23 +94,17 @@ local function UpdateMission(frame, mission)
 			anchor = mech
 		end
 	end
-
-	for k,v in pairs(addfollower[missionID]) do
-		if checkemptyavail(counters[k]) then
-			addfollower[missionID][k] = nil
-		end
-	end
 end
 
-function f:GarrisonMissionList_Update()
-	local self = GarrisonMissionFrame.MissionTab.MissionList
 
+local MissionList = GarrisonMissionFrame.MissionTab.MissionList
+local function GarrisonMissionList_Update()
 	ns.HideBossMechanicFrames()
 
-	if self.showInProgress then return end
+	if MissionList.showInProgress then return end
 
-	local missions = self.availableMissions
-	local scrollFrame = self.listScroll
+	local missions = MissionList.availableMissions
+	local scrollFrame = MissionList.listScroll
 	local offset = HybridScrollFrame_GetOffset(scrollFrame)
 	for i,button in pairs(scrollFrame.buttons) do
 		local index = offset + i
@@ -145,26 +112,11 @@ function f:GarrisonMissionList_Update()
 	end
 end
 
-function f:doscroll(...)
-	old_scroll(...)
-	f:GarrisonMissionList_Update()
+
+local orig = GarrisonMissionFrame.MissionTab.MissionList.listScroll.update
+GarrisonMissionFrame.MissionTab.MissionList.listScroll.update = function(...)
+	orig(...)
+	GarrisonMissionList_Update()
 end
 
-
-local function ShowMission(mission)
-	local i = 1
-	for _,k in pairs(addfollower[mission.missionID]) do
-		local followerFrame = GarrisonMissionFrame.MissionTab.MissionPage.Followers[i]
-		local followerInfo = C_Garrison.GetFollowerInfo(k)
-		GarrisonMissionPage_SetFollower(followerFrame, followerInfo)
-		i=i+1
-	end
-end
-
-
-function ns.OnLoad()
-	old_scroll = GarrisonMissionFrame.MissionTab.MissionList.listScroll.update
-	GarrisonMissionFrame.MissionTab.MissionList.listScroll.update = f.doscroll
-	hooksecurefunc("GarrisonMissionList_Update", f.GarrisonMissionList_Update)
-	hooksecurefunc("GarrisonMissionPage_ShowMission", ShowMission)
-end
+hooksecurefunc("GarrisonMissionList_Update", GarrisonMissionList_Update)
