@@ -182,30 +182,6 @@ local function ShowMission(mission)
 	end
 end
 
-local function FollowerRightClick(self, button, ...)
-	local MISSION_PAGE_FRAME = GarrisonMissionFrame.MissionTab.MissionPage
-	if MISSION_PAGE_FRAME:IsVisible() and MISSION_PAGE_FRAME.missionInfo and button == "RightButton" then
-		if not self.info.status then
-			GarrisonMissionPage_AddFollower(self.id)
-		elseif self.info.status == GARRISON_FOLLOWER_IN_PARTY then
-			for i = 1, #MISSION_PAGE_FRAME.Followers do
-				local followerFrame = MISSION_PAGE_FRAME.Followers[i]
-				if followerFrame.info then
-
-					if followerFrame.info.followerID == self.id then
-						GarrisonMissionPage_ClearFollower(followerFrame,true)
-						break
-					end
-				end
-			end
-		else
-			return oldfollowerrightclick(self, button, ...)
-		end
-	else
-		return oldfollowerrightclick(self, button, ...)
-	end
-end
-
 
 function ns.OnLoad()
 	old_scroll = GarrisonMissionFrame.MissionTab.MissionList.listScroll.update
@@ -213,7 +189,4 @@ function ns.OnLoad()
 	hooksecurefunc("GarrisonMissionList_Update", f.GarrisonMissionList_Update)
 	hooksecurefunc("GarrisonFollowerList_Update", UpdateFollowerTimeLeft)
 	hooksecurefunc("GarrisonMissionPage_ShowMission", ShowMission)
-
-	oldfollowerrightclick = GarrisonFollowerListButton_OnClick
-	GarrisonFollowerListButton_OnClick = FollowerRightClick
 end
