@@ -11,6 +11,8 @@
 externals\events.lua
 
 GarrisonMissonEnhanced.lua
+
+AutoAdd.lua
 BossMechanicFrames.lua
 FollowerClick.lua
 FollowerTimeLeft.lua

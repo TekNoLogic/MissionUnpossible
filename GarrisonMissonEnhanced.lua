@@ -58,7 +58,7 @@ function f:CheckCounter(trait,missionid)
 end
 
 
-local inactive_statii = {
+ns.inactive_statii = {
 	[GARRISON_FOLLOWER_ON_MISSION] = true,
 	[GARRISON_FOLLOWER_INACTIVE] = true,
 }
@@ -75,7 +75,7 @@ local function GetCounterText(trait, missionid)
 					total = total + 1
 
 					local status = C_Garrison.GetFollowerStatus(guid)
-					if not inactive_statii[status] then
+					if not ns.inactive_statii[status] then
 						available = available + 1
 					end
 				end
