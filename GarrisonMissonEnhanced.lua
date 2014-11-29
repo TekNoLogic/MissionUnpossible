@@ -106,7 +106,6 @@ local function UpdateMission(frame, mission)
 	f:CreateCounter(missionID)
 
 	local _, _, _, _, _, _, _, missionbosses = C_Garrison.GetMissionInfo(missionID)
-	local buttoncount = 1
 	local anchor = frame.Rewards[mission.numRewards]
 	for _,boss in pairs(missionbosses) do
 		for _,mechanic in pairs(boss.mechanics) do
@@ -120,7 +119,6 @@ local function UpdateMission(frame, mission)
 			mech:Show()
 
 			anchor = mech
-			buttoncount = buttoncount + 1
 		end
 	end
 
