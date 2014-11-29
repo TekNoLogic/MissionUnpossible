@@ -150,25 +150,6 @@ function f:doscroll(...)
 	f:GarrisonMissionList_Update()
 end
 
-local function UpdateFollowerTimeLeft(self)
-	local followers = self.FollowerList.followers
-	local followersList = self.FollowerList.followersList
-
-	local inprogress = C_Garrison.GetInProgressMissions()
-
-	local scrollFrame = self.FollowerList.listScroll
-	local offset = HybridScrollFrame_GetOffset(scrollFrame)
-	for i,button in pairs(scrollFrame.buttons) do
-		local index = offset + i
-		if index <= #followersList then
-			local follower = followers[followersList[index]]
-			if (follower.status == GARRISON_FOLLOWER_ON_MISSION) then
-				local timeLeft = ns.GetFollowerTimeLeft(follower.followerID)
-				button.Status:SetText(follower.status.. " (".. timeLeft.. ")")
-			end
-		end
-	end
-end
 
 local function ShowMission(mission)
 	local i = 1
@@ -185,6 +166,5 @@ function ns.OnLoad()
 	old_scroll = GarrisonMissionFrame.MissionTab.MissionList.listScroll.update
 	GarrisonMissionFrame.MissionTab.MissionList.listScroll.update = f.doscroll
 	hooksecurefunc("GarrisonMissionList_Update", f.GarrisonMissionList_Update)
-	hooksecurefunc("GarrisonFollowerList_Update", UpdateFollowerTimeLeft)
 	hooksecurefunc("GarrisonMissionPage_ShowMission", ShowMission)
 end
