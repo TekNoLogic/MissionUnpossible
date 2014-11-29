@@ -68,7 +68,7 @@ local function GetCounterText(trait, missionid)
 	else
 		local available, total = 0, 0
 
-		local buffed = C_Garrison.GetBuffedFollowersForMission(missionid);
+		local buffed = C_Garrison.GetBuffedFollowersForMission(missionid)
 		for guid,buffs in pairs(buffed) do
 			for i,buff in pairs(buffs) do
 				if buff.name == trait then
