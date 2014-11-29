@@ -3,7 +3,6 @@ local myname, ns = ...
 
 local f = CreateFrame("frame")
 local old_scroll
-local traiticons = {}
 local counters = {}
 local addfollower = {}
 local oldfollowerrightclick
@@ -91,15 +90,6 @@ local function GetCounterText(trait, missionid)
 	end
 end
 
-local function CreateTraitFrame(parent)
-	local f = CreateFrame("Frame", nil, parent, "GarrisonMissionEnemyLargeMechanicTemplate")
-
-	local label = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-	label:SetPoint("BOTTOM", 0, -16)
-	f.label = label
-
-	return f
-end
 
 local function UpdateMission(frame, mission)
 	local missionID = mission.missionID
@@ -114,28 +104,22 @@ local function UpdateMission(frame, mission)
 	frame.extraEnhancedText:SetText(extratext)
 
 	f:CreateCounter(missionID)
-	if not traiticons[missionID] then
-		traiticons[missionID] = {}
-	end
 
 	local _, _, _, _, _, _, _, missionbosses = C_Garrison.GetMissionInfo(missionID)
-	local missiontraits = traiticons[missionID]
 	local buttoncount = 1
 	local anchor = frame.Rewards[mission.numRewards]
 	for _,boss in pairs(missionbosses) do
 		for _,mechanic in pairs(boss.mechanics) do
-			local trait = missiontraits[buttoncount] or CreateTraitFrame(frame)
+			local mech = ns.GetBossMechanicFrame()
 
-			local cancounter = f:CheckCounter(mechanic.name, missionID)
+			mech.label:SetText(GetCounterText(mechanic.name, missionID))
+			mech.Icon:SetTexture(mechanic.icon)
 
-			trait.label:SetText(GetCounterText(mechanic.name, missionID))
-			trait.Icon:SetTexture(mechanic.icon)
+			mech:SetParent(frame)
+			mech:SetPoint("LEFT", anchor, "LEFT", -40, 0)
+			mech:Show()
 
-			trait:SetParent(frame)
-			trait:SetPoint("LEFT", anchor, "LEFT", -40, 0)
-			trait:Show()
-
-			anchor = trait
+			anchor = mech
 			buttoncount = buttoncount + 1
 		end
 	end
@@ -150,9 +134,7 @@ end
 function f:GarrisonMissionList_Update()
 	local self = GarrisonMissionFrame.MissionTab.MissionList
 
-	for _,traits in pairs(traiticons) do
-		for _,trait in pairs(traits) do trait:Hide() end
-	end
+	ns.HideBossMechanicFrames()
 
 	if self.showInProgress then return end
 
