@@ -38,14 +38,7 @@ local function UpdateMission(frame)
 	local mission = frame.info
 	local missionID = mission.missionID
 
-	if not frame.extraEnhancedText then
-		frame.extraEnhancedText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-		frame.extraEnhancedText:SetPoint("BOTTOMLEFT", 165, 5)
-	end
-
-	frame.extraEnhancedText:Show()
-	local extratext = mission.numFollowers.. " followers"
-	frame.extraEnhancedText:SetText(extratext)
+	frame.Level:SetText(mission.level.. "\nx".. mission.numFollowers)
 
 	local _, _, _, _, _, _, _, missionbosses = C_Garrison.GetMissionInfo(missionID)
 	local anchor = frame.Rewards[mission.numRewards]
