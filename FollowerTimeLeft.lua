@@ -28,7 +28,9 @@ hooksecurefunc("GarrisonFollowerList_Update", function(self)
 			local follower = followers[followersList[index]]
 			if follower.status == GARRISON_FOLLOWER_ON_MISSION then
 				local timeLeft = GetFollowerTimeLeft(follower.followerID, inprogress)
-				button.Status:SetText(follower.status.. " (".. timeLeft.. ")")
+				if timeLeft then
+					button.Status:SetText(follower.status.. " (".. timeLeft.. ")")
+				end
 			end
 		end
 	end
