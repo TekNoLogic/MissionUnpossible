@@ -78,3 +78,8 @@ end
 
 hooksecurefunc("GarrisonMissionList_Update", GarrisonMissionList_Update)
 hooksecurefunc(GarrisonMissionFrame.MissionTab.MissionList.listScroll, "update", GarrisonMissionList_Update)
+
+
+for _,butt in pairs(MissionList.listScroll.buttons) do
+	butt:SetScript("OnEnter", nil)
+end
