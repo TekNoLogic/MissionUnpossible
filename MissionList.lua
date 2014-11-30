@@ -34,7 +34,8 @@ local function GetCounterText(trait, missionid)
 end
 
 
-local function UpdateMission(frame, mission)
+local function UpdateMission(frame)
+	local mission = frame.info
 	local missionID = mission.missionID
 
 	if not frame.extraEnhancedText then
@@ -71,20 +72,11 @@ local function GarrisonMissionList_Update()
 
 	if MissionList.showInProgress then return end
 
-	local missions = MissionList.availableMissions
-	local scrollFrame = MissionList.listScroll
-	local offset = HybridScrollFrame_GetOffset(scrollFrame)
-	for i,button in pairs(scrollFrame.buttons) do
-		local index = offset + i
-		if missions[index] then UpdateMission(button, missions[index]) end
+	for i,button in pairs(MissionList.listScroll.buttons) do
+		UpdateMission(button)
 	end
 end
 
 
-local orig = GarrisonMissionFrame.MissionTab.MissionList.listScroll.update
-GarrisonMissionFrame.MissionTab.MissionList.listScroll.update = function(...)
-	orig(...)
-	GarrisonMissionList_Update()
-end
-
 hooksecurefunc("GarrisonMissionList_Update", GarrisonMissionList_Update)
+hooksecurefunc(GarrisonMissionFrame.MissionTab.MissionList.listScroll, "update", GarrisonMissionList_Update)
