@@ -49,6 +49,7 @@ local function UpdateMission(frame)
 
 	local _, _, _, _, _, _, _, missionbosses = C_Garrison.GetMissionInfo(missionID)
 	local anchor = frame.Rewards[mission.numRewards]
+	local lastframe
 	for _,boss in pairs(missionbosses) do
 		for _,mechanic in pairs(boss.mechanics) do
 			local mech = ns.GetBossMechanicFrame()
@@ -57,10 +58,14 @@ local function UpdateMission(frame)
 			mech.Icon:SetTexture(mechanic.icon)
 
 			mech:SetParent(frame)
-			mech:SetPoint("LEFT", anchor, "LEFT", -40, 0)
+			mech:SetPoint("RIGHT", anchor, "LEFT", -12, 0)
 			mech:Show()
 
-			anchor = mech
+			if lastframe then
+				lastframe:SetPoint("RIGHT", mech, "LEFT", -12, 0)
+			end
+
+			lastframe = mech
 		end
 	end
 end
