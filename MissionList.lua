@@ -5,6 +5,7 @@ local myname, ns = ...
 ns.inactive_statii = {
 	[GARRISON_FOLLOWER_ON_MISSION] = true,
 	[GARRISON_FOLLOWER_INACTIVE] = true,
+	[GARRISON_FOLLOWER_WORKING] = true,
 }
 local function GetCounterText(trait, missionid)
 	local available, total = 0, 0
