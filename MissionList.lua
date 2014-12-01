@@ -51,6 +51,7 @@ local function UpdateMission(frame)
 			local mech = ns.GetBossMechanicFrame()
 
 			mech.label:SetText(GetCounterText(mechanic.name, missionID))
+			mech.info = mechanic
 			mech.Icon:SetTexture(mechanic.icon)
 
 			mech:SetParent(frame)
