@@ -36,11 +36,14 @@ end
 
 local function UpdateMission(frame)
 	local mission = frame.info
+	if not mission then return end
 	local missionID = mission.missionID
 
 	frame.Level:SetText(mission.level.. "\nx".. mission.numFollowers)
 
 	local _, _, _, _, _, _, _, missionbosses = C_Garrison.GetMissionInfo(missionID)
+	if not missionbosses then return end
+
 	local anchor = frame.Rewards[mission.numRewards]
 	local lastframe
 	for _,boss in pairs(missionbosses) do
