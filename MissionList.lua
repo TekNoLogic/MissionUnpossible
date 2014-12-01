@@ -25,9 +25,9 @@ local function GetCounterText(trait, missionid)
 	end
 
 	if total == 0 then
-		return "|cff9d9d9d--"
+		return GRAY_FONT_COLOR_CODE.. "--"
 	elseif available == 0 then
-		return "|cff9d9d9d".. available.. "/".. total
+		return GRAY_FONT_COLOR_CODE.. available.. "/".. total
 	else
 		return available.. "/".. total
 	end
