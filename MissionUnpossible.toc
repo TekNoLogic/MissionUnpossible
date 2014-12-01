@@ -1,9 +1,8 @@
 ## Interface: 60000
 
-## Title: Garrison Mission Enhanced
-## Author: Dorwido
-## Version: 1.6.0
-## Notes: Improves the Garrison Missons
+## Title: Mission Unpossible
+## Author: Tekkub Stoutwrithe
+## Version: Alpha
 
 ## LoadOnDemand: 1
 ## LoadWith: Blizzard_GarrisonUI
