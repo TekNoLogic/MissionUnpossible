@@ -7,8 +7,8 @@ ns.inactive_statii = {
 	[GARRISON_FOLLOWER_INACTIVE] = true,
 	[GARRISON_FOLLOWER_WORKING] = true,
 }
-local function GetCounterText(trait, missionid)
-	local available, total = 0, 0
+local function GetCounterText(trait, missionid, missionlevel)
+	local available, total, levelmatch = 0, 0, false
 
 	local buffed = C_Garrison.GetBuffedFollowersForMission(missionid)
 	for guid,buffs in pairs(buffed) do
@@ -19,6 +19,9 @@ local function GetCounterText(trait, missionid)
 				local status = C_Garrison.GetFollowerStatus(guid)
 				if not ns.inactive_statii[status] then
 					available = available + 1
+
+					local level = C_Garrison.GetFollowerLevel(guid)
+					if level >= missionlevel then levelmatch = true end
 				end
 			end
 		end
@@ -26,10 +29,15 @@ local function GetCounterText(trait, missionid)
 
 	if total == 0 then
 		return GRAY_FONT_COLOR_CODE.. "--"
-	elseif available == 0 then
-		return GRAY_FONT_COLOR_CODE.. available.. "/".. total
 	else
-		return available.. "/".. total
+		local color = ORANGE_FONT_COLOR_CODE
+		if available == 0 then
+			color = GRAY_FONT_COLOR_CODE
+		elseif
+			levelmatch then color = ""
+		end
+
+		return color.. available.. "/".. total
 	end
 end
 
@@ -50,7 +58,7 @@ local function UpdateMission(frame)
 		for _,mechanic in pairs(boss.mechanics) do
 			local mech = ns.GetBossMechanicFrame()
 
-			mech.label:SetText(GetCounterText(mechanic.name, missionID))
+			mech.label:SetText(GetCounterText(mechanic.name, missionID, mission.level))
 			mech.Icon:SetTexture(mechanic.icon)
 
 			mech:SetParent(frame)
