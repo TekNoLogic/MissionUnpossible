@@ -8,7 +8,7 @@ ns.inactive_statii = {
 	[GARRISON_FOLLOWER_WORKING] = true,
 }
 local function GetCounterText(trait, missionid, missionlevel)
-	local available, total, levelmatch = 0, 0, false
+	local available, total, levelmatch, overlevel = 0, 0, false, false
 
 	local buffed = C_Garrison.GetBuffedFollowersForMission(missionid)
 	for guid,buffs in pairs(buffed) do
@@ -21,7 +21,8 @@ local function GetCounterText(trait, missionid, missionlevel)
 					available = available + 1
 
 					local level = C_Garrison.GetFollowerLevel(guid)
-					if level >= missionlevel then levelmatch = true end
+					if level == missionlevel then levelmatch = true end
+					if level > missionlevel then overlevel = true end
 				end
 			end
 		end
@@ -33,8 +34,10 @@ local function GetCounterText(trait, missionid, missionlevel)
 		local color = ORANGE_FONT_COLOR_CODE
 		if available == 0 then
 			color = GRAY_FONT_COLOR_CODE
-		elseif
-			levelmatch then color = ""
+		elseif levelmatch then
+			color = HIGHLIGHT_FONT_COLOR_CODE
+		elseif overlevel then
+			color = BATTLENET_FONT_COLOR_CODE
 		end
 
 		return color.. available.. "/".. total
