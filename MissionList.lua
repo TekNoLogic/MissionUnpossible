@@ -7,10 +7,12 @@ ns.inactive_statii = {
 	[GARRISON_FOLLOWER_INACTIVE] = true,
 	[GARRISON_FOLLOWER_WORKING] = true,
 }
-local function GetCounterText(trait, missionid, missionlevel)
+local function GetCounterText(trait, mission)
 	local available, total, levelmatch, overlevel = 0, 0, false, false
+	local missionid = mission.missionID
+	local missionlevel = mission.level
 
-	local buffed = C_Garrison.GetBuffedFollowersForMission(missionid)
+	local buffed = C_Garrison.GetBuffedFollowersForMission(mission.missionID)
 	for guid,buffs in pairs(buffed) do
 		for i,buff in pairs(buffs) do
 			if buff.name == trait then
@@ -21,8 +23,13 @@ local function GetCounterText(trait, missionid, missionlevel)
 					available = available + 1
 
 					local level = C_Garrison.GetFollowerLevel(guid)
-					if level == missionlevel then levelmatch = true end
-					if level > missionlevel then overlevel = true end
+					if mission.level == 100 and mission.iLevel > 0 then
+						local ilvl = C_Garrison.GetFollowerItemLevelAverage(guid)
+						if ilvl >= mission.iLevel then levelmatch = true end
+					else
+						if level == mission.level then levelmatch = true end
+						if level > mission.level then overlevel = true end
+					end
 				end
 			end
 		end
@@ -61,7 +68,7 @@ local function UpdateMission(frame)
 		for _,mechanic in pairs(boss.mechanics) do
 			local mech = ns.GetBossMechanicFrame()
 
-			mech.label:SetText(GetCounterText(mechanic.name, missionID, mission.level))
+			mech.label:SetText(GetCounterText(mechanic.name, mission))
 			mech.Icon:SetTexture(mechanic.icon)
 
 			mech:SetParent(frame)
