@@ -6,6 +6,7 @@ ns.inactive_statii = {
 	[GARRISON_FOLLOWER_ON_MISSION] = true,
 	[GARRISON_FOLLOWER_INACTIVE] = true,
 	[GARRISON_FOLLOWER_WORKING] = true,
+	[GARRISON_FOLLOWER_IN_PARTY] = true,
 }
 local function GetCounterText(trait, mission)
 	local available, total, levelmatch, overlevel = 0, 0, false, false
