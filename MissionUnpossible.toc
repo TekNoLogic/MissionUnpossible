@@ -12,5 +12,6 @@ externals\events.lua
 AutoAdd.lua
 BossMechanicFrames.lua
 FollowerClick.lua
+FollowerSummary.lua
 FollowerTimeLeft.lua
 MissionList.lua
