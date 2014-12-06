@@ -12,8 +12,7 @@ local function GetFollowerWithBuff(mechanic)
 	for guid,buffs in pairs(buffed) do
 		for i,buff in pairs(buffs) do
 			if buff.name == mechanic then
-				local status = C_Garrison.GetFollowerStatus(guid)
-				if not ns.inactive_statii[status] then
+				if ns.IsFollowerAvailable(guid, true) then
 					if counter == 0 then return end
 					counter = counter - 1
 					follower = guid

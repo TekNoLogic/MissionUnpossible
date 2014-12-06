@@ -6,8 +6,15 @@ ns.inactive_statii = {
 	[GARRISON_FOLLOWER_ON_MISSION] = true,
 	[GARRISON_FOLLOWER_INACTIVE] = true,
 	[GARRISON_FOLLOWER_WORKING] = true,
-	[GARRISON_FOLLOWER_IN_PARTY] = true,
 }
+function ns.IsFollowerAvailable(guid, excludeparty)
+	local status = C_Garrison.GetFollowerStatus(guid)
+	if ns.inactive_statii[status] then return false end
+	if excludeparty and status == GARRISON_FOLLOWER_IN_PARTY then return false end
+	return true
+end
+
+
 local function GetCounterText(trait, mission)
 	local available, total, levelmatch, overlevel = 0, 0, false, false
 	local missionid = mission.missionID
@@ -19,8 +26,7 @@ local function GetCounterText(trait, mission)
 			if buff.name == trait then
 				total = total + 1
 
-				local status = C_Garrison.GetFollowerStatus(guid)
-				if not ns.inactive_statii[status] then
+				if ns.IsFollowerAvailable(guid) then
 					available = available + 1
 
 					local level = C_Garrison.GetFollowerLevel(guid)
