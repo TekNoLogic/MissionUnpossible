@@ -16,3 +16,4 @@ FollowerSummary.lua
 FollowerTimeLeft.lua
 MissionList.lua
 MissionPageCloseBinding.lua
+MissionsComplete.lua
