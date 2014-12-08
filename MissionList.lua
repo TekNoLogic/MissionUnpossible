@@ -15,6 +15,7 @@ function ns.IsFollowerAvailable(guid, excludeparty)
 end
 
 
+local usedbuffs = setmetatable({}, {__index = function(t,i) return 0 end})
 local function GetCounterText(trait, mission)
 	local available, total, levelmatch, overlevel = 0, 0, false, false
 	local missionid = mission.missionID
@@ -46,7 +47,7 @@ local function GetCounterText(trait, mission)
 		return GRAY_FONT_COLOR_CODE.. "--"
 	else
 		local color = ORANGE_FONT_COLOR_CODE
-		if available == 0 then
+		if available <= usedbuffs[trait] then
 			color = GRAY_FONT_COLOR_CODE
 		elseif levelmatch then
 			color = HIGHLIGHT_FONT_COLOR_CODE
@@ -63,6 +64,7 @@ local function UpdateMission(frame)
 	local mission = frame.info
 	if not mission then return end
 	local missionID = mission.missionID
+	wipe(usedbuffs)
 
 	frame.Level:SetText(mission.level.. "\nx".. mission.numFollowers)
 
@@ -75,8 +77,9 @@ local function UpdateMission(frame)
 		for _,mechanic in pairs(boss.mechanics) do
 			local mech = ns.GetBossMechanicFrame()
 
-			mech.label:SetText(GetCounterText(mechanic.name, mission))
 			mech.Icon:SetTexture(mechanic.icon)
+			mech.label:SetText(GetCounterText(mechanic.name, mission))
+			usedbuffs[mechanic.name] = usedbuffs[mechanic.name] + 1
 
 			mech:SetParent(frame)
 			mech:SetPoint("RIGHT", anchor, "LEFT", -12, 0)
