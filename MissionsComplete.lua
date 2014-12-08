@@ -3,11 +3,12 @@ local myname, ns = ...
 
 
 local rolling = false
+local mission
 local function CompleteMissions()
 	rolling = true
 
 	local missions = C_Garrison.GetCompleteMissions()
-	local mission = missions[1]
+	mission = missions[1]
 	if not mission then
 		GarrisonMissionFrame.MissionTab.MissionList.CompleteDialog:Hide()
 		GarrisonMissionFrame.MissionComplete.currentIndex = 1
@@ -40,9 +41,17 @@ butt:SetScript("OnClick", CompleteMissions)
 function ns.GARRISON_MISSION_COMPLETE_RESPONSE(event, missionID, canComplete, succeeded)
 	if not rolling then return end
 
-	print("Mission success, rolling", missionID, canComplete, succeeded)
-	C_Garrison.MissionBonusRoll(missionID)
-	C_Timer.After(0.5, CompleteMissions)
+	assert(mission, "No mission table cached")
+	assert(mission.missionID == missionID, "Mission IDs do not match")
+
+	local _, _, _, successChance = C_Garrison.GetPartyMissionInfo(missionID)
+	if succeeded then
+		print("Mission '".. mission.name.. "' successful (".. successChance.. "% chance)")
+		C_Garrison.MissionBonusRoll(missionID)
+	else
+		print("Mission '".. mission.name.. "' failed (".. successChance.. "% chance)")
+		C_Timer.After(0.5, CompleteMissions)
+	end
 end
 ns.RegisterEvent("GARRISON_MISSION_COMPLETE_RESPONSE")
 
@@ -50,7 +59,47 @@ ns.RegisterEvent("GARRISON_MISSION_COMPLETE_RESPONSE")
 function ns.GARRISON_MISSION_BONUS_ROLL_COMPLETE(event, missionID, succeeded)
 	if not rolling then return end
 
+	assert(mission, "No mission table cached")
+	assert(mission.missionID == missionID, "Mission IDs do not match")
+
+	local totalTimeString, totalTimeSeconds, isMissionTimeImproved, successChance, partyBuffs, isEnvMechanicCountered, xpBonus, materialMultiplier = C_Garrison.GetPartyMissionInfo(missionID)
+	local location, xp, environment, environmentDesc, environmentTexture, locPrefix, isExhausting, enemies = C_Garrison.GetMissionInfo(missionID)
+
 	print("Roll complete", missionID, succeeded)
+	print(C_Garrison.GetPartyMissionInfo(missionID))
+	print(C_Garrison.GetMissionInfo(missionID))
+
+	for id,reward in pairs(mission.rewards) do
+		if reward.itemID then
+			local _, link = GetItemInfo(reward.itemID)
+			if reward.quantity > 1 then
+				print(link.. " x".. reward.quantity)
+			else
+				print(link)
+			end
+		else
+			if reward.currencyID and reward.quantity then
+				if reward.currencyID == 0 then
+					print(ns.GS(reward.quantity))
+				elseif reward.currencyID == GARRISON_CURRENCY then
+					local currencyName = GetCurrencyInfo(reward.currencyID)
+					local quantity = floor(reward.quantity * mission.materialMultiplier)
+					print(currencyName.. " x".. quantity)
+				else
+					local currencyName = GetCurrencyInfo(reward.currencyID)
+					print(currencyName.. " x".. reward.quantity)
+				end
+			elseif reward.title then
+				if reward.quality then
+					print(ITEM_QUALITY_COLORS[reward.quality + 1].hex.. reward.title)
+				elseif reward.followerXP then
+					print(BreakUpLargeNumbers(reward.followerXP).. " follower XP")
+				else
+					print(reward.title)
+				end
+			end
+		end
+	end
 	C_Timer.After(0.5, CompleteMissions)
 end
-ns.RegisterEvent("GARRISON_MISSION_BONUS_ROLL_COMPLETE", print)
+ns.RegisterEvent("GARRISON_MISSION_BONUS_ROLL_COMPLETE")

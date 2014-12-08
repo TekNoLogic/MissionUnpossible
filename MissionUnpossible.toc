@@ -8,6 +8,7 @@
 ## LoadWith: Blizzard_GarrisonUI
 
 externals\events.lua
+externals\gsc.lua
 
 AutoAdd.lua
 BossMechanicFrames.lua
