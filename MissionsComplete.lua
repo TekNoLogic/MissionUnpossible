@@ -2,6 +2,7 @@
 local myname, ns = ...
 
 
+local TURNIN_DELAY = 0.8
 local rolling = false
 local mission
 local function CompleteMissions()
@@ -50,7 +51,7 @@ function ns.GARRISON_MISSION_COMPLETE_RESPONSE(event, missionID, canComplete, su
 		C_Garrison.MissionBonusRoll(missionID)
 	else
 		print("Mission '".. mission.name.. "' failed (".. successChance.. "% chance)")
-		C_Timer.After(0.5, CompleteMissions)
+		C_Timer.After(TURNIN_DELAY, CompleteMissions)
 	end
 end
 ns.RegisterEvent("GARRISON_MISSION_COMPLETE_RESPONSE")
@@ -100,6 +101,6 @@ function ns.GARRISON_MISSION_BONUS_ROLL_COMPLETE(event, missionID, succeeded)
 			end
 		end
 	end
-	C_Timer.After(0.5, CompleteMissions)
+	C_Timer.After(TURNIN_DELAY, CompleteMissions)
 end
 ns.RegisterEvent("GARRISON_MISSION_BONUS_ROLL_COMPLETE")
