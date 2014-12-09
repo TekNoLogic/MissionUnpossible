@@ -92,8 +92,11 @@ function ns.GARRISON_MISSION_BONUS_ROLL_COMPLETE(event, missionID, succeeded)
 	assert(mission, "No mission table cached")
 	assert(mission.missionID == missionID, "Mission IDs do not match")
 
-	local totalTimeString, totalTimeSeconds, isMissionTimeImproved, successChance, partyBuffs, isEnvMechanicCountered, xpBonus, materialMultiplier = C_Garrison.GetPartyMissionInfo(missionID)
-	local location, xp, environment, environmentDesc, environmentTexture, locPrefix, isExhausting, enemies = C_Garrison.GetMissionInfo(missionID)
+	local totalTimeString, totalTimeSeconds, isMissionTimeImproved, successChance,
+		partyBuffs, isEnvMechanicCountered, bonusXP, materialMultiplier =
+		C_Garrison.GetPartyMissionInfo(missionID)
+	local location, xp, environment, environmentDesc, environmentTexture,
+		locPrefix, isExhausting, enemies = C_Garrison.GetMissionInfo(missionID)
 
 	ns.Debug(event, missionID, succeeded)
 	ns.Debug(C_Garrison.GetMissionInfo(missionID))
