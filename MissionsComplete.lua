@@ -73,6 +73,13 @@ ns.RegisterEvent("GARRISON_MISSION_COMPLETE_RESPONSE")
 function ns.GARRISON_FOLLOWER_XP_CHANGED(event, followerID, xpAward, oldXP, oldLevel, oldQuality)
 	ns.Debug(event, followerID, xpAward, oldXP, oldLevel, oldQuality)
 	ns.Debug(C_Garrison.GetFollowerMissionCompleteInfo(followerID))
+
+	local name, displayID, level, quality, currXP, maxXP =
+		C_Garrison.GetFollowerMissionCompleteInfo(followerID)
+
+	if xpAward > 0 then ns.Print(name, "["..level.."]", "gained", xpAward, "experience") end
+	if oldLevel ~= level then ns.Print(name, "is now level", level) end
+	if oldQuality ~= quality then ns.Print(name, "is now", ITEM_QUALITY_COLORS[quality].. level) end
 end
 ns.RegisterEvent("GARRISON_FOLLOWER_XP_CHANGED")
 
