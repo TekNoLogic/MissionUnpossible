@@ -4,9 +4,12 @@
 ## Author: Tekkub Stoutwrithe
 ## Version: Alpha
 
+## OptionalDeps: tekDebug, tekErr
+
 ## LoadOnDemand: 1
 ## LoadWith: Blizzard_GarrisonUI
 
+externals\debug.lua
 externals\events.lua
 externals\gsc.lua
 

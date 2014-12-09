@@ -22,10 +22,10 @@ local function CompleteMissions()
 	end
 
 	if mission.state == -1 then
-		print("Marking mission complete", mission.missionID)
+		ns.Debug("Marking mission complete", mission.missionID)
 		C_Garrison.MarkMissionComplete(mission.missionID)
 	else
-		print("Mission success, rolling", mission.missionID)
+		ns.Debug("Mission success, rolling", mission.missionID)
 		C_Garrison.MissionBonusRoll(mission.missionID)
 	end
 end
@@ -45,6 +45,10 @@ function ns.GARRISON_MISSION_COMPLETE_RESPONSE(event, missionID, canComplete, su
 	assert(mission, "No mission table cached")
 	assert(mission.missionID == missionID, "Mission IDs do not match")
 
+	TEKKLASTMISSION = mission
+	ns.Debug(event, missionID, canComplete, succeeded)
+	ns.Debug(C_Garrison.GetPartyMissionInfo(missionID))
+
 	local _, _, _, successChance = C_Garrison.GetPartyMissionInfo(missionID)
 	if succeeded then
 		print("Mission '".. mission.name.. "' successful (".. successChance.. "% chance)")
@@ -57,6 +61,13 @@ end
 ns.RegisterEvent("GARRISON_MISSION_COMPLETE_RESPONSE")
 
 
+function ns.GARRISON_FOLLOWER_XP_CHANGED(event, followerID, xpAward, oldXP, oldLevel, oldQuality)
+	ns.Debug(event, followerID, xpAward, oldXP, oldLevel, oldQuality)
+	ns.Debug(C_Garrison.GetFollowerMissionCompleteInfo(followerID))
+end
+ns.RegisterEvent("GARRISON_FOLLOWER_XP_CHANGED")
+
+
 function ns.GARRISON_MISSION_BONUS_ROLL_COMPLETE(event, missionID, succeeded)
 	if not rolling then return end
 
@@ -66,9 +77,8 @@ function ns.GARRISON_MISSION_BONUS_ROLL_COMPLETE(event, missionID, succeeded)
 	local totalTimeString, totalTimeSeconds, isMissionTimeImproved, successChance, partyBuffs, isEnvMechanicCountered, xpBonus, materialMultiplier = C_Garrison.GetPartyMissionInfo(missionID)
 	local location, xp, environment, environmentDesc, environmentTexture, locPrefix, isExhausting, enemies = C_Garrison.GetMissionInfo(missionID)
 
-	print("Roll complete", missionID, succeeded)
-	print(C_Garrison.GetPartyMissionInfo(missionID))
-	print(C_Garrison.GetMissionInfo(missionID))
+	ns.Debug(event, missionID, succeeded)
+	ns.Debug(C_Garrison.GetMissionInfo(missionID))
 
 	for id,reward in pairs(mission.rewards) do
 		if reward.itemID then
