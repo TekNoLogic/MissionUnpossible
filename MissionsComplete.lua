@@ -91,6 +91,9 @@ function ns.GARRISON_MISSION_BONUS_ROLL_COMPLETE(event, missionID, succeeded)
 
 	for id,reward in pairs(mission.rewards) do
 		if reward.itemID then
+			-- [XP] is communicated as an item here
+			-- It sends the standard chat log exp gain though
+			ns.Debug("reward.itemID", reward.itemID)
 			local _, link = GetItemInfo(reward.itemID)
 			if reward.quantity > 1 then
 				ns.Printf(LOOT_ITEM_PUSHED_SELF_MULTIPLE, link, reward.quantity)
