@@ -39,6 +39,8 @@ butt:SetPoint("TOP", bf.ViewButton, "BOTTOM", 0, -10)
 butt:SetScript("OnClick", CompleteMissions)
 
 
+local SUCCESS = ITEM_QUALITY_COLORS[2].hex.. "successful|r"
+local FAIL    = RED_FONT_COLOR_CODE.. "failed|r"
 function ns.GARRISON_MISSION_COMPLETE_RESPONSE(event, missionID, canComplete, succeeded)
 	if not rolling then return end
 
@@ -52,7 +54,7 @@ function ns.GARRISON_MISSION_COMPLETE_RESPONSE(event, missionID, canComplete, su
 	local _, _, _, successChance, _, _, bonusXP =
 		C_Garrison.GetPartyMissionInfo(missionID)
 	local _, xp = C_Garrison.GetMissionInfo(missionID)
-	local outcome = succeeded and "successful" or "failed"
+	local outcome = succeeded and SUCCESS or FAIL
 
 	ns.Printf("Mission %q %s (%s%% chance)", mission.name, outcome, successChance or "??")
 	if bonusXP then
