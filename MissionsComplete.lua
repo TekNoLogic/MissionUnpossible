@@ -57,7 +57,7 @@ function ns.GARRISON_MISSION_COMPLETE_RESPONSE(event, missionID, canComplete, su
 	local outcome = succeeded and SUCCESS or FAIL
 
 	ns.Printf("Mission %q %s (%s%% chance)", mission.name, outcome, successChance or "??")
-	if bonusXP then
+	if bonusXP > 0 then
 		ns.Print(xp + bonusXP, "follower XP earned (".. bonusXP.. " bonus)")
 	else
 		ns.Print(xp, "follower XP earned")
