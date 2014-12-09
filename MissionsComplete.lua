@@ -50,11 +50,12 @@ function ns.GARRISON_MISSION_COMPLETE_RESPONSE(event, missionID, canComplete, su
 	ns.Debug(C_Garrison.GetPartyMissionInfo(missionID))
 
 	local _, _, _, successChance = C_Garrison.GetPartyMissionInfo(missionID)
+	local outcome = succeeded and "successful" or "failed"
+
+	ns.Printf("Mission %q %s (%s%% chance)", mission.name, outcome, successChance or "??")
 	if succeeded then
-		print("Mission '".. mission.name.. "' successful (".. successChance.. "% chance)")
 		C_Garrison.MissionBonusRoll(missionID)
 	else
-		print("Mission '".. mission.name.. "' failed (".. successChance.. "% chance)")
 		C_Timer.After(TURNIN_DELAY, CompleteMissions)
 	end
 end
@@ -84,29 +85,29 @@ function ns.GARRISON_MISSION_BONUS_ROLL_COMPLETE(event, missionID, succeeded)
 		if reward.itemID then
 			local _, link = GetItemInfo(reward.itemID)
 			if reward.quantity > 1 then
-				print(link.. " x".. reward.quantity)
+				ns.Printf(LOOT_ITEM_PUSHED_SELF_MULTIPLE, link, reward.quantity)
 			else
-				print(link)
+				ns.Printf(LOOT_ITEM_PUSHED_SELF, link)
 			end
 		else
 			if reward.currencyID and reward.quantity then
 				if reward.currencyID == 0 then
-					print(ns.GS(reward.quantity))
-				elseif reward.currencyID == GARRISON_CURRENCY then
-					local currencyName = GetCurrencyInfo(reward.currencyID)
-					local quantity = floor(reward.quantity * mission.materialMultiplier)
-					print(currencyName.. " x".. quantity)
+					ns.Print("Received gold:", ns.GS(reward.quantity))
 				else
 					local currencyName = GetCurrencyInfo(reward.currencyID)
-					print(currencyName.. " x".. reward.quantity)
+					local quantity = reward.quantity
+					if reward.currencyID == GARRISON_CURRENCY then
+						quantity = floor(quantity * mission.materialMultiplier)
+					end
+					ns.Printf(CURRENCY_GAINED_MULTIPLE, currencyName, quantity)
 				end
 			elseif reward.title then
 				if reward.quality then
-					print(ITEM_QUALITY_COLORS[reward.quality + 1].hex.. reward.title)
+					ns.Print(ITEM_QUALITY_COLORS[reward.quality + 1].hex.. reward.title)
 				elseif reward.followerXP then
-					print(BreakUpLargeNumbers(reward.followerXP).. " follower XP")
+					ns.Print(BreakUpLargeNumbers(reward.followerXP), "bonus follower XP")
 				else
-					print(reward.title)
+					ns.Print(reward.title)
 				end
 			end
 		end
