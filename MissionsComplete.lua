@@ -49,10 +49,18 @@ function ns.GARRISON_MISSION_COMPLETE_RESPONSE(event, missionID, canComplete, su
 	ns.Debug(event, missionID, canComplete, succeeded)
 	ns.Debug(C_Garrison.GetPartyMissionInfo(missionID))
 
-	local _, _, _, successChance = C_Garrison.GetPartyMissionInfo(missionID)
+	local _, _, _, successChance, _, _, bonusXP =
+		C_Garrison.GetPartyMissionInfo(missionID)
+	local _, xp = C_Garrison.GetMissionInfo(missionID)
 	local outcome = succeeded and "successful" or "failed"
 
 	ns.Printf("Mission %q %s (%s%% chance)", mission.name, outcome, successChance or "??")
+	if bonusXP then
+		ns.Print(xp + bonusXP, "follower XP earned (".. bonusXP.. " bonus)")
+	else
+		ns.Print(xp, "follower XP earned")
+	end
+
 	if succeeded then
 		C_Garrison.MissionBonusRoll(missionID)
 	else
