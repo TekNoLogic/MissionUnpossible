@@ -39,25 +39,18 @@ butt:SetPoint("TOP", bf.ViewButton, "BOTTOM", 0, -10)
 butt:SetScript("OnClick", CompleteMissions)
 
 
-local chances, xps, bonusxps = {}, {}, {}
+local chances = {}
 local function CacheDatas()
 	wipe(chances)
-	wipe(xps)
-	wipe(bonusxps)
 
 	local missions = C_Garrison.GetCompleteMissions()
 	for i,mission in pairs(missions) do
 		local missionID = mission.missionID
 		ns.Debug("Caching mission data", missionID)
-		ns.Debug("C_Garrison.GetMissionInfo", C_Garrison.GetMissionInfo(missionID))
 		ns.Debug("C_Garrison.GetPartyMissionInfo", C_Garrison.GetPartyMissionInfo(missionID))
 
-		local _, _, _, successChance, _, _, bonusXP =
-			C_Garrison.GetPartyMissionInfo(missionID)
-		local _, xp = C_Garrison.GetMissionInfo(missionID)
-		chances[missionID] = successChance
-		bonusxps[missionID] = bonusXP
-		xps[missionID] = xp
+		local _, _, _, chance = C_Garrison.GetPartyMissionInfo(missionID)
+		chances[missionID] = chance
 	end
 end
 ns.OnLoad = CacheDatas
@@ -78,23 +71,12 @@ function ns.GARRISON_MISSION_COMPLETE_RESPONSE(event, missionID, canComplete, su
 	assert(mission, "No mission table cached")
 	assert(mission.missionID == missionID, "Mission IDs do not match")
 
-	TEKKLASTMISSION = mission
 	ns.Debug(event, missionID, canComplete, succeeded)
-	ns.Debug("C_Garrison.GetPartyMissionInfo", C_Garrison.GetPartyMissionInfo(missionID))
 
-	local successChance = chances[missionID]
-	local bonusXP = bonusxps[missionID]
-	local xp = xps[missionID]
+	local chance = chances[missionID] or "??"
 	local outcome = succeeded and SUCCESS or FAIL
 
-	ns.Printf("Mission %q %s (%s%% chance)", mission.name, outcome, successChance or "??")
-	if bonusXP and bonusXP > 0 then
-		local bonus = BreakUpLargeNumbers(bonusXP)
-		local total = BreakUpLargeNumbers(xp + bonusXP)
-		ns.Print(total, "follower XP earned (".. bonus.. " bonus)")
-	else
-		ns.Print(BreakUpLargeNumbers(xp or 0), "follower XP earned")
-	end
+	ns.Printf("Mission %q %s (%s%% chance)", mission.name, outcome, chance)
 
 	if succeeded then
 		C_Garrison.MissionBonusRoll(missionID)
@@ -128,14 +110,9 @@ function ns.GARRISON_MISSION_BONUS_ROLL_COMPLETE(event, missionID, succeeded)
 	assert(mission, "No mission table cached")
 	assert(mission.missionID == missionID, "Mission IDs do not match")
 
-	local totalTimeString, totalTimeSeconds, isMissionTimeImproved, successChance,
-		partyBuffs, isEnvMechanicCountered, bonusXP, materialMultiplier =
-		C_Garrison.GetPartyMissionInfo(missionID)
-	local location, xp, environment, environmentDesc, environmentTexture,
-		locPrefix, isExhausting, enemies = C_Garrison.GetMissionInfo(missionID)
+	local _, _, _, _, _, _, _, matmult = C_Garrison.GetPartyMissionInfo(missionID)
 
 	ns.Debug(event, missionID, succeeded)
-	ns.Debug("C_Garrison.GetMissionInfo", C_Garrison.GetMissionInfo(missionID))
 
 	for id,reward in pairs(mission.rewards) do
 		if reward.itemID then
@@ -158,8 +135,8 @@ function ns.GARRISON_MISSION_BONUS_ROLL_COMPLETE(event, missionID, succeeded)
 				else
 					local currencyName = GetCurrencyInfo(reward.currencyID)
 					local quantity = reward.quantity
-					if reward.currencyID == GARRISON_CURRENCY and materialMultiplier then
-						quantity = floor(quantity * materialMultiplier)
+					if reward.currencyID == GARRISON_CURRENCY and matmult then
+						quantity = floor(quantity * matmult)
 					end
 					ns.Printf(CURRENCY_GAINED_MULTIPLE, currencyName, quantity)
 				end
