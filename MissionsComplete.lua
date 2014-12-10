@@ -49,7 +49,7 @@ function ns.GARRISON_MISSION_COMPLETE_RESPONSE(event, missionID, canComplete, su
 
 	TEKKLASTMISSION = mission
 	ns.Debug(event, missionID, canComplete, succeeded)
-	ns.Debug(C_Garrison.GetPartyMissionInfo(missionID))
+	ns.Debug("C_Garrison.GetPartyMissionInfo", C_Garrison.GetPartyMissionInfo(missionID))
 
 	local _, _, _, successChance, _, _, bonusXP =
 		C_Garrison.GetPartyMissionInfo(missionID)
@@ -74,7 +74,7 @@ ns.RegisterEvent("GARRISON_MISSION_COMPLETE_RESPONSE")
 
 function ns.GARRISON_FOLLOWER_XP_CHANGED(event, followerID, xpAward, oldXP, oldLevel, oldQuality)
 	ns.Debug(event, followerID, xpAward, oldXP, oldLevel, oldQuality)
-	ns.Debug(C_Garrison.GetFollowerMissionCompleteInfo(followerID))
+	ns.Debug("C_Garrison.GetFollowerMissionCompleteInfo", C_Garrison.GetFollowerMissionCompleteInfo(followerID))
 
 	local name, displayID, level, quality, currXP, maxXP =
 		C_Garrison.GetFollowerMissionCompleteInfo(followerID)
@@ -99,7 +99,7 @@ function ns.GARRISON_MISSION_BONUS_ROLL_COMPLETE(event, missionID, succeeded)
 		locPrefix, isExhausting, enemies = C_Garrison.GetMissionInfo(missionID)
 
 	ns.Debug(event, missionID, succeeded)
-	ns.Debug(C_Garrison.GetMissionInfo(missionID))
+	ns.Debug("C_Garrison.GetMissionInfo", C_Garrison.GetMissionInfo(missionID))
 
 	for id,reward in pairs(mission.rewards) do
 		if reward.itemID then
