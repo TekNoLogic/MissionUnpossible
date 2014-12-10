@@ -57,10 +57,12 @@ function ns.GARRISON_MISSION_COMPLETE_RESPONSE(event, missionID, canComplete, su
 	local outcome = succeeded and SUCCESS or FAIL
 
 	ns.Printf("Mission %q %s (%s%% chance)", mission.name, outcome, successChance or "??")
-	if bonusXP > 0 then
-		ns.Print(xp + bonusXP, "follower XP earned (".. bonusXP.. " bonus)")
+	if bonusXP and bonusXP > 0 then
+		local bonus = BreakUpLargeNumbers(bonusXP)
+		local total = BreakUpLargeNumbers(xp + bonusXP)
+		ns.Print(total, "follower XP earned (".. bonus.. " bonus)")
 	else
-		ns.Print(xp, "follower XP earned")
+		ns.Print(BreakUpLargeNumbers(xp or 0), "follower XP earned")
 	end
 
 	if succeeded then
@@ -79,9 +81,12 @@ function ns.GARRISON_FOLLOWER_XP_CHANGED(event, followerID, xpAward, oldXP, oldL
 	local name, displayID, level, quality, currXP, maxXP =
 		C_Garrison.GetFollowerMissionCompleteInfo(followerID)
 
-	if xpAward > 0 then ns.Print(name, "["..level.."]", "gained", xpAward, "experience") end
+	local color = ITEM_QUALITY_COLORS[quality].hex
+	if xpAward > 0 then
+		ns.Print(name, color.. "["..level.."]|r", "gained", BreakUpLargeNumbers(xpAward), "experience")
+	end
 	if oldLevel ~= level then ns.Print(name, "is now level", level) end
-	if oldQuality ~= quality then ns.Print(name, "is now", ITEM_QUALITY_COLORS[quality].. level) end
+	if oldQuality ~= quality then ns.Print(name, "is now", color.. level) end
 end
 ns.RegisterEvent("GARRISON_FOLLOWER_XP_CHANGED")
 
@@ -122,8 +127,8 @@ function ns.GARRISON_MISSION_BONUS_ROLL_COMPLETE(event, missionID, succeeded)
 				else
 					local currencyName = GetCurrencyInfo(reward.currencyID)
 					local quantity = reward.quantity
-					if reward.currencyID == GARRISON_CURRENCY then
-						quantity = floor(quantity * mission.materialMultiplier)
+					if reward.currencyID == GARRISON_CURRENCY and materialMultiplier then
+						quantity = floor(quantity * materialMultiplier)
 					end
 					ns.Printf(CURRENCY_GAINED_MULTIPLE, currencyName, quantity)
 				end
