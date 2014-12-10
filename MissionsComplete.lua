@@ -21,6 +21,9 @@ local function CompleteMissions()
 		return
 	end
 
+	local _, _, _, chance = C_Garrison.GetPartyMissionInfo(mission.missionID)
+	mission.successchance = chance
+
 	if mission.state == -1 then
 		ns.Debug("Marking mission complete", mission.missionID)
 		C_Garrison.MarkMissionComplete(mission.missionID)
@@ -39,18 +42,11 @@ butt:SetPoint("TOP", bf.ViewButton, "BOTTOM", 0, -10)
 butt:SetScript("OnClick", CompleteMissions)
 
 
-local chances = {}
 local function CacheDatas()
-	wipe(chances)
-
 	local missions = C_Garrison.GetCompleteMissions()
 	for i,mission in pairs(missions) do
 		local missionID = mission.missionID
 		ns.Debug("Caching mission data", missionID)
-		ns.Debug("C_Garrison.GetPartyMissionInfo", C_Garrison.GetPartyMissionInfo(missionID))
-
-		local _, _, _, chance = C_Garrison.GetPartyMissionInfo(missionID)
-		chances[missionID] = chance
 	end
 end
 ns.OnLoad = CacheDatas
@@ -73,7 +69,7 @@ function ns.GARRISON_MISSION_COMPLETE_RESPONSE(event, missionID, canComplete, su
 
 	ns.Debug(event, missionID, canComplete, succeeded)
 
-	local chance = chances[missionID] or "??"
+	local chance = mission.successchance or "??"
 	local outcome = succeeded and SUCCESS or FAIL
 
 	ns.Printf("Mission %q %s (%s%% chance)", mission.name, outcome, chance)
