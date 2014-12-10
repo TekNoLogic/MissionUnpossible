@@ -39,6 +39,37 @@ butt:SetPoint("TOP", bf.ViewButton, "BOTTOM", 0, -10)
 butt:SetScript("OnClick", CompleteMissions)
 
 
+local chances, xps, bonusxps = {}, {}, {}
+local function CacheDatas()
+	wipe(chances)
+	wipe(xps)
+	wipe(bonusxps)
+
+	local missions = C_Garrison.GetCompleteMissions()
+	for i,mission in pairs(missions) do
+		local missionID = mission.missionID
+		ns.Debug("Caching mission data", missionID)
+		ns.Debug("C_Garrison.GetMissionInfo", C_Garrison.GetMissionInfo(missionID))
+		ns.Debug("C_Garrison.GetPartyMissionInfo", C_Garrison.GetPartyMissionInfo(missionID))
+
+		local _, _, _, successChance, _, _, bonusXP =
+			C_Garrison.GetPartyMissionInfo(missionID)
+		local _, xp = C_Garrison.GetMissionInfo(missionID)
+		chances[missionID] = successChance
+		bonusxps[missionID] = bonusXP
+		xps[missionID] = xp
+	end
+end
+ns.OnLoad = CacheDatas
+
+
+function ns.GARRISON_MISSION_NPC_OPENED(...)
+	ns.Debug(...)
+	CacheDatas()
+end
+ns.RegisterEvent("GARRISON_MISSION_NPC_OPENED")
+
+
 local SUCCESS = ITEM_QUALITY_COLORS[2].hex.. "successful|r"
 local FAIL    = RED_FONT_COLOR_CODE.. "failed|r"
 function ns.GARRISON_MISSION_COMPLETE_RESPONSE(event, missionID, canComplete, succeeded)
@@ -51,9 +82,9 @@ function ns.GARRISON_MISSION_COMPLETE_RESPONSE(event, missionID, canComplete, su
 	ns.Debug(event, missionID, canComplete, succeeded)
 	ns.Debug("C_Garrison.GetPartyMissionInfo", C_Garrison.GetPartyMissionInfo(missionID))
 
-	local _, _, _, successChance, _, _, bonusXP =
-		C_Garrison.GetPartyMissionInfo(missionID)
-	local _, xp = C_Garrison.GetMissionInfo(missionID)
+	local successChance = chances[missionID]
+	local bonusXP = bonusxps[missionID]
+	local xp = xps[missionID]
 	local outcome = succeeded and SUCCESS or FAIL
 
 	ns.Printf("Mission %q %s (%s%% chance)", mission.name, outcome, successChance or "??")
