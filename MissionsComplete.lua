@@ -102,7 +102,7 @@ function ns.GARRISON_FOLLOWER_XP_CHANGED(event, followerID, xpAward, oldXP, oldL
 		ns.Print(name, color.. "["..level.."]|r", "gained", BreakUpLargeNumbers(xpAward), "experience")
 	end
 	if oldLevel ~= level then ns.Print(name, "is now level", level) end
-	if oldQuality ~= quality then ns.Print(name, "is now", color.. level) end
+	if oldQuality ~= quality then ns.Print(name, "upgraded to", color.. level) end
 end
 ns.RegisterEvent("GARRISON_FOLLOWER_XP_CHANGED")
 
