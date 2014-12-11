@@ -128,7 +128,7 @@ function ns.GARRISON_MISSION_BONUS_ROLL_COMPLETE(event, missionID, succeeded)
 				if reward.quantity > 1 then
 					ns.Printf(LOOT_ITEM_PUSHED_SELF_MULTIPLE, link, reward.quantity)
 				else
-					ns.Printf(LOOT_ITEM_PUSHED_SELF, link or "[Unknown item]")
+					ns.Printf(LOOT_ITEM_PUSHED_SELF, link or "[Unknown item #".. reward.itemID.. "]")
 				end
 			end
 		else
