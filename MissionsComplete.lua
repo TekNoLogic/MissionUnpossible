@@ -113,8 +113,6 @@ function ns.GARRISON_MISSION_BONUS_ROLL_COMPLETE(event, missionID, succeeded)
 	assert(mission, "No mission table cached")
 	assert(mission.missionID == missionID, "Mission IDs do not match")
 
-	local _, _, _, _, _, _, _, matmult = C_Garrison.GetPartyMissionInfo(missionID)
-
 	ns.Debug(event, missionID, succeeded)
 
 	for id,reward in pairs(mission.rewards) do
@@ -135,12 +133,9 @@ function ns.GARRISON_MISSION_BONUS_ROLL_COMPLETE(event, missionID, succeeded)
 			if reward.currencyID and reward.quantity then
 				if reward.currencyID == 0 then
 					ns.Print("Received gold:", ns.GS(reward.quantity))
-				else
+				elseif reward.currencyID ~= GARRISON_CURRENCY then
 					local currencyName = GetCurrencyInfo(reward.currencyID)
 					local quantity = reward.quantity
-					if reward.currencyID == GARRISON_CURRENCY and matmult then
-						quantity = floor(quantity * matmult)
-					end
 					ns.Printf(CURRENCY_GAINED_MULTIPLE, currencyName, quantity)
 				end
 			elseif reward.title then
