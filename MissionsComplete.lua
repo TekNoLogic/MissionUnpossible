@@ -43,10 +43,17 @@ butt:SetScript("OnClick", CompleteMissions)
 
 
 local function CacheDatas()
+	ns.Debug("Caching mission data")
 	local missions = C_Garrison.GetCompleteMissions()
 	for i,mission in pairs(missions) do
-		local missionID = mission.missionID
-		ns.Debug("Caching mission data", missionID)
+		for id,reward in pairs(mission.rewards) do
+			if reward.itemID then
+				if not GetItemInfo(reward.itemID) then
+					GameTooltip:SetHyperlink("item:"..reward.itemID)
+					GameTooltip:Hide()
+				end
+			end
+		end
 	end
 end
 ns.OnLoad = CacheDatas
