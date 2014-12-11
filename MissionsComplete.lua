@@ -141,9 +141,7 @@ function ns.GARRISON_MISSION_BONUS_ROLL_COMPLETE(event, missionID, succeeded)
 			elseif reward.title then
 				if reward.quality then
 					ns.Print(ITEM_QUALITY_COLORS[reward.quality + 1].hex.. reward.title)
-				elseif reward.followerXP then
-					ns.Print(BreakUpLargeNumbers(reward.followerXP), "bonus follower XP")
-				else
+				elseif not reward.followerXP then
 					ns.Print(reward.title)
 				end
 			end
