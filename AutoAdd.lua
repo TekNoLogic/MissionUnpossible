@@ -27,7 +27,14 @@ local function GetFollowerWithBuff(mechanic, level)
 end
 
 
-hooksecurefunc("GarrisonMissionPage_ShowMission", function(mission)
+local dirty = false
+hooksecurefunc("GarrisonMissionPage_ShowMission", function() dirty = true end)
+hooksecurefunc("GarrisonFollowerList_UpdateFollowers", function()
+	if not dirty then return end
+	dirty = false
+
+	local mission = GarrisonMissionFrame.MissionTab.MissionPage.missionInfo
+
 	wipe(counters)
 
 	local _, _, _, _, _, _, _, missionbosses = C_Garrison.GetMissionInfo(mission.missionID)
