@@ -2,7 +2,7 @@
 
 ## Title: Mission Unpossible
 ## Author: Tekkub Stoutwrithe
-## Version: Alpha
+## Version: 6.0.0.1
 
 ## OptionalDeps: tekDebug, tekErr
 
