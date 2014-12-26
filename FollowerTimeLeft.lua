@@ -1,8 +1,13 @@
 
 local myname, ns = ...
 
+local inprogress
+function ns.RefreshInProgress()
+	inprogress = C_Garrison.GetInProgressMissions()
+end
 
-local function GetFollowerTimeLeft(followerID, inprogress)
+
+function ns.GetFollowerTimeLeft(followerID)
 	for i,mission in pairs(inprogress) do
 		for j,guid in pairs(mission.followers) do
 			if guid == followerID then
@@ -14,7 +19,7 @@ end
 
 
 hooksecurefunc("GarrisonFollowerList_Update", function(self)
-	local inprogress = C_Garrison.GetInProgressMissions()
+	ns.RefreshInProgress()
 
 	local followers = self.FollowerList.followers
 	local followersList = self.FollowerList.followersList
@@ -27,7 +32,7 @@ hooksecurefunc("GarrisonFollowerList_Update", function(self)
 		if index <= #followersList then
 			local follower = followers[followersList[index]]
 			if follower.status == GARRISON_FOLLOWER_ON_MISSION then
-				local timeLeft = GetFollowerTimeLeft(follower.followerID, inprogress)
+				local timeLeft = ns.GetFollowerTimeLeft(follower.followerID)
 				if timeLeft then
 					button.Status:SetText(follower.status.. " (".. timeLeft.. ")")
 				end

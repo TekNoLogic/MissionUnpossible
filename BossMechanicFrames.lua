@@ -12,9 +12,6 @@ local function CreateBossMechanicFrame()
 	label:SetPoint("BOTTOM", 0, -16)
 	f.label = label
 
-	-- until we have a nice tooltip to display, don't handle mouse input at all
-	f:EnableMouse(false)
-
 	table.insert(frames, f)
 
 	return f

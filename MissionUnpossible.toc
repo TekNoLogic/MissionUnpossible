@@ -16,6 +16,7 @@ externals\print.lua
 
 AutoAdd.lua
 BossMechanicFrames.lua
+BossMechanicTooltip.lua
 FollowerClick.lua
 FollowerSummary.lua
 FollowerTimeLeft.lua

@@ -77,6 +77,8 @@ local function UpdateMission(frame)
 		for _,mechanic in pairs(boss.mechanics) do
 			local mech = ns.GetBossMechanicFrame()
 
+			mech.info = mechanic
+			
 			mech.Icon:SetTexture(mechanic.icon)
 			mech.label:SetText(GetCounterText(mechanic.name, mission))
 			usedbuffs[mechanic.name] = usedbuffs[mechanic.name] + 1
