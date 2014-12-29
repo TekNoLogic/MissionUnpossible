@@ -60,6 +60,37 @@ local function GetCounterText(trait, mission)
 end
 
 
+local function SetReward(frame, rewards)
+	local info
+	for id,reward in pairs(rewards) do
+		if reward.itemID == frame.itemID or reward.title == frame.title then
+			info = reward
+		end
+	end
+
+	if not info then return end
+
+	local text
+	if info.followerXP then
+		text = info.followerXP
+	elseif info.itemID == 120205 then
+		text = "3.5%"
+	elseif info.itemID and info.quantity == 1 then
+		local _, _, qual, ilvl = GetItemInfo(info.itemID)
+		if (ilvl or 0) > 500 then text = ilvl end
+	elseif info.currencyID == 0 then
+		text = (info.quantity / 10000).. "g"
+	end
+
+	if text then
+		frame.Quantity:SetText(text)
+		frame.Quantity:Show()
+	end
+
+	frame.Quantity:SetPoint("BOTTOMRIGHT", frame.Icon, -4, 4)
+end
+
+
 local function UpdateMission(frame)
 	local mission = frame.info
 	if not mission then return end
@@ -67,6 +98,10 @@ local function UpdateMission(frame)
 	wipe(usedbuffs)
 
 	frame.Level:SetText(mission.level.. "\nx".. mission.numFollowers)
+
+	for i,rewardframe in pairs(frame.Rewards) do
+		SetReward(rewardframe, mission.rewards)
+	end
 
 	local _, _, _, _, _, _, _, missionbosses = C_Garrison.GetMissionInfo(missionID)
 	if not missionbosses then return end
@@ -78,7 +113,7 @@ local function UpdateMission(frame)
 			local mech = ns.GetBossMechanicFrame()
 
 			mech.info = mechanic
-			
+
 			mech.Icon:SetTexture(mechanic.icon)
 			mech.label:SetText(GetCounterText(mechanic.name, mission))
 			usedbuffs[mechanic.name] = usedbuffs[mechanic.name] + 1
