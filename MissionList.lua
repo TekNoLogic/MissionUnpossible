@@ -76,34 +76,48 @@ local function GetCounterText(trait, mission)
 end
 
 
-local function SetReward(frame, rewards)
-	local info
+local function GetReward(frame, rewards)
 	for id,reward in pairs(rewards) do
-		if reward.itemID == frame.itemID or reward.title == frame.title then
-			info = reward
+		if frame.currencyID then
+			if reward.currencyID == frame.currencyID then return reward end
+		elseif frame.itemID then
+			if reward.itemID == frame.itemID then return reward end
+		elseif reward.title == frame.title then
+			return reward
 		end
 	end
+end
 
-	if not info then return end
+
+local function SetReward(frame, rewards)
+	frame.Quantity:SetPoint("BOTTOMRIGHT", frame.Icon, -4, 4)
+
+
+	local reward = GetReward(frame, rewards)
+	if not reward then return end
 
 	local text
-	if info.followerXP then
-		text = info.followerXP
-	elseif info.itemID == 120205 then
+	if reward.followerXP then
+		if reward.followerXP > 2000 then
+			text = (reward.followerXP / 1000).. "k"
+		else
+			text = reward.followerXP
+		end
+	elseif reward.itemID == 120205 then
 		text = "3.5%"
-	elseif info.itemID and info.quantity == 1 then
-		local _, _, qual, ilvl = GetItemInfo(info.itemID)
+	elseif reward.itemID and reward.quantity == 1 then
+		local _, _, qual, ilvl = GetItemInfo(reward.itemID)
 		if (ilvl or 0) > 500 then text = ilvl end
-	elseif info.currencyID == 0 then
-		text = (info.quantity / 10000).. "g"
+	elseif reward.currencyID == 0 then
+		text = (reward.quantity / 10000).. "g"
+	elseif reward.currencyID then
+		text = reward.quantity
 	end
 
 	if text then
 		frame.Quantity:SetText(text)
 		frame.Quantity:Show()
 	end
-
-	frame.Quantity:SetPoint("BOTTOMRIGHT", frame.Icon, -4, 4)
 end
 
 
