@@ -46,19 +46,10 @@ local function FollowerCanCounter(follower, mechanic)
 end
 
 
-local ilvlcolors = {
-	[600] = ITEM_QUALITY_COLORS[1].hex,
-	[615] = ITEM_QUALITY_COLORS[2].hex,
-	[630] = ITEM_QUALITY_COLORS[3].hex,
-	[645] = ITEM_QUALITY_COLORS[4].hex,
-}
 local function FollowerToString(follower)
-	local level = follower.level
-	if level == 100 then
-		local colorlvl = math.floor(follower.iLevel / 15) * 15
-		level = ilvlcolors[colorlvl].. follower.iLevel
-	else
-		level = "|cffffffff".. level
+	local level = ITEM_QUALITY_COLORS[follower.quality].hex.. follower.level
+	if follower.level == 100 then
+		level = ITEM_QUALITY_COLORS[follower.quality].hex.. follower.iLevel
 	end
 
 	if ns.IsFollowerAvailable(follower.followerID) then
