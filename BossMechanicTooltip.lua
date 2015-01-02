@@ -46,16 +46,42 @@ local function FollowerCanCounter(follower, mechanic)
 end
 
 
+local function FollowerHasAbilityID(follower, abilityID)
+	if not follower.isCollected then return false end
+
+	local abilities = C_Garrison.GetFollowerAbilities(follower.followerID)
+	for i,ability in pairs(abilities) do
+		if ability.id == abilityID then return true end
+	end
+
+	return false
+end
+
+
+local function FollowerHasScavenger(follower)
+	return FollowerHasAbilityID(follower, 79)
+end
+
+
+local function FollowerHasExtraTraining(follower)
+	return FollowerHasAbilityID(follower, 80)
+end
+
+
 local function FollowerToString(follower)
 	local level = ITEM_QUALITY_COLORS[follower.quality].hex.. follower.level
 	if follower.level == 100 then
 		level = ITEM_QUALITY_COLORS[follower.quality].hex.. follower.iLevel
 	end
 
+	local name = follower.name
+	if FollowerHasScavenger(follower) then name = name.. " [$$]" end
+	if FollowerHasExtraTraining(follower) then name = name.. " [++]" end
+
 	if ns.IsFollowerAvailable(follower.followerID) then
-		return level.. "|cffffffff - ".. follower.name
+		return level.. "|cffffffff - ".. name
 	else
-		local namestr = level.. ITEM_QUALITY_COLORS[0].hex.. " - ".. follower.name
+		local namestr = level.. ITEM_QUALITY_COLORS[0].hex.. " - ".. name
 		local status = C_Garrison.GetFollowerStatus(follower.followerID)
 
 		if status == GARRISON_FOLLOWER_ON_MISSION then
