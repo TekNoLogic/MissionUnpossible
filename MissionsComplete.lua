@@ -99,10 +99,14 @@ function ns.GARRISON_FOLLOWER_XP_CHANGED(event, followerID, xpAward, oldXP, oldL
 
 	local color = ITEM_QUALITY_COLORS[quality].hex
 	if xpAward > 0 then
-		ns.Print(name, color.. "["..level.."]|r", "gained", BreakUpLargeNumbers(xpAward), "experience")
+		ns.ChatFramePrint("CHAT_MSG_COMBAT_XP_GAIN", name, color.. "["..level.."]|r", "gained", BreakUpLargeNumbers(xpAward), "experience")
 	end
-	if oldLevel ~= level then ns.Print(name, "is now level", level) end
-	if oldQuality ~= quality then ns.Print(name, "upgraded to", color.. level) end
+	if oldLevel ~= level then
+		ns.ChatFramePrint("PLAYER_LEVEL_UP", name, "is now level", level)
+	end
+	if oldQuality ~= quality then
+		ns.ChatFramePrint("PLAYER_LEVEL_UP", name, "upgraded quality to", color.. level)
+	end
 end
 ns.RegisterEvent("GARRISON_FOLLOWER_XP_CHANGED")
 
@@ -124,19 +128,19 @@ function ns.GARRISON_MISSION_BONUS_ROLL_COMPLETE(event, missionID, succeeded)
 
 				local _, link = GetItemInfo(reward.itemID)
 				if reward.quantity > 1 then
-					ns.Printf(LOOT_ITEM_PUSHED_SELF_MULTIPLE, link, reward.quantity)
+					ns.ChatFramePrintf("CHAT_MSG_LOOT", LOOT_ITEM_PUSHED_SELF_MULTIPLE, link, reward.quantity)
 				else
-					ns.Printf(LOOT_ITEM_PUSHED_SELF, link or "[Unknown item #".. reward.itemID.. "]")
+					ns.ChatFramePrintf("CHAT_MSG_LOOT", LOOT_ITEM_PUSHED_SELF, link or "[Unknown item #".. reward.itemID.. "]")
 				end
 			end
 		else
 			if reward.currencyID and reward.quantity then
 				if reward.currencyID == 0 then
-					ns.Print("Received gold:", ns.GS(reward.quantity))
+					ns.ChatFramePrint("CHAT_MSG_MONEY", "Received gold:", ns.GS(reward.quantity))
 				elseif reward.currencyID ~= GARRISON_CURRENCY then
 					local currencyName = GetCurrencyInfo(reward.currencyID)
 					local quantity = reward.quantity
-					ns.Printf(CURRENCY_GAINED_MULTIPLE, currencyName, quantity)
+					ns.ChatFramePrintf("CHAT_MSG_CURRENCY", CURRENCY_GAINED_MULTIPLE, currencyName, quantity)
 				end
 			elseif reward.title then
 				if reward.quality then
