@@ -20,6 +20,7 @@ BossMechanicTooltip.lua
 FollowerClick.lua
 FollowerSummary.lua
 FollowerTimeLeft.lua
+FollowerUpgrades.lua
 MissionList.lua
 MissionPageCloseBinding.lua
 MissionsComplete.lua
