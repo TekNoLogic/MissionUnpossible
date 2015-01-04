@@ -15,19 +15,11 @@ function ns.IsFollowerAvailable(guid, excludeparty)
 end
 
 
-local function OnlyFollowerXP(mission)
-	for id,reward in pairs(mission.rewards) do
-		if not reward.followerXP then return false end
-	end
-	return true
-end
-
 local usedbuffs = setmetatable({}, {__index = function(t,i) return 0 end})
 local function GetCounterText(trait, mission)
 	local available, total, levelmatch, overlevel = 0, 0, false, false
 	local missionid = mission.missionID
 	local missionlevel = mission.level
-	local onlyxp = OnlyFollowerXP(mission)
 
 	local buffed = C_Garrison.GetBuffedFollowersForMission(mission.missionID)
 	for guid,buffs in pairs(buffed) do
@@ -44,7 +36,7 @@ local function GetCounterText(trait, mission)
 					if level == 100 and mission.level == 100 then
 						local ilvl = C_Garrison.GetFollowerItemLevelAverage(guid)
 						if ilvl >= mission.iLevel then
-							if onlyxp and quality == 4 then
+							if quality == 4 then
 								overlevel = true
 							else
 								levelmatch = true
