@@ -1,2 +1,9 @@
+6.0.0.2-Beta
+    Add handy text to rewards in list
+    Push rewards into chat frames directly
+    Add follower info to boss mechanic tooltips
+    Add ilvl upgrading buttons to follower detail
+    Always list purple followers as overlevel at 100
+
 6.0.0.1-Beta
     And so it begins...
