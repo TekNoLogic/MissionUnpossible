@@ -88,22 +88,32 @@ local function SetReward(frame, rewards)
 	local reward = GetReward(frame, rewards)
 	if not reward then return end
 
+
 	local text
-	if reward.followerXP then
-		if reward.followerXP > 2000 then
-			text = (reward.followerXP / 1000).. "k"
-		else
-			text = reward.followerXP
+	if ns.is_six_one then
+		if reward.itemID == 120205 then
+			text = "3.5%"
+		elseif reward.itemID and reward.quantity == 1 then
+			local _, _, qual, ilvl = GetItemInfo(reward.itemID)
+			if (ilvl or 0) > 500 then text = ilvl end
 		end
-	elseif reward.itemID == 120205 then
-		text = "3.5%"
-	elseif reward.itemID and reward.quantity == 1 then
-		local _, _, qual, ilvl = GetItemInfo(reward.itemID)
-		if (ilvl or 0) > 500 then text = ilvl end
-	elseif reward.currencyID == 0 then
-		text = (reward.quantity / 10000).. "g"
-	elseif reward.currencyID then
-		text = reward.quantity
+	else
+		if reward.followerXP then
+			if reward.followerXP > 2000 then
+				text = (reward.followerXP / 1000).. "k"
+			else
+				text = reward.followerXP
+			end
+		elseif reward.itemID == 120205 then
+			text = "3.5%"
+		elseif reward.itemID and reward.quantity == 1 then
+			local _, _, qual, ilvl = GetItemInfo(reward.itemID)
+			if (ilvl or 0) > 500 then text = ilvl end
+		elseif reward.currencyID == 0 then
+			text = (reward.quantity / 10000).. "g"
+		elseif reward.currencyID then
+			text = reward.quantity
+		end
 	end
 
 	if text then

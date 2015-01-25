@@ -18,6 +18,9 @@ function ns.GetFollowerTimeLeft(followerID)
 end
 
 
+if ns.is_six_one then return end
+
+
 hooksecurefunc("GarrisonFollowerList_Update", function(self)
 	ns.RefreshInProgress()
 

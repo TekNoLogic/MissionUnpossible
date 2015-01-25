@@ -1,5 +1,6 @@
 
 local myname, ns = ...
+if ns.is_six_one then return end
 
 
 local tab = GarrisonMissionFrame.FollowerTab
