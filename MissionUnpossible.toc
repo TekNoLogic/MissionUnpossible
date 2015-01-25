@@ -13,6 +13,7 @@ externals\debug.lua
 externals\events.lua
 externals\gsc.lua
 externals\print.lua
+externals\ptr.lua
 
 AutoAdd.lua
 BossMechanicFrames.lua
