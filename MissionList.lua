@@ -123,11 +123,28 @@ local function SetReward(frame, rewards)
 end
 
 
+local follower_counters = setmetatable({}, {
+	__index = function(t,i)
+		local butt = CreateFrame("Frame", nil, i)
+		butt:SetSize(28, 28)
+		butt:SetPoint("LEFT", i.Title)
+		butt:SetPoint("BOTTOM", 0, 7)
+
+		local icon = butt:CreateTexture(nil, "BORDER")
+		icon:SetAllPoints()
+		icon:SetTexture("Interface\\Icons\\achievement_guildperk_everybodysfriend")
+		butt.icon = icon
+
+		t[i] = butt
+		return butt
+	end
+})
+
+
 local expire_strings = setmetatable({}, {
 	__index = function(t,i)
 		local fs = i:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-		fs:SetPoint("BOTTOM", 0, 15)
-		fs:SetPoint("LEFT", i.Title)
+		fs:SetPoint("LEFT", follower_counters[i], "RIGHT", 10, 0)
 		fs:SetTextColor(.7, .7, .7, 1)
 		t[i] = fs
 		return fs
@@ -135,16 +152,24 @@ local expire_strings = setmetatable({}, {
 })
 
 
+local SOLO_TEXTURE = "Interface\\Icons\\sha_spell_warlock_demonsoul"
+local GROUP_TEXTURE = "Interface\\Icons\\achievement_guildperk_everybodysfriend"
 local function UpdateMission(frame)
 	local mission = frame.info
 	if not mission then return end
 	local missionID = mission.missionID
 	wipe(usedbuffs)
 
-	frame.Level:SetText(mission.level.. "\nx".. mission.numFollowers)
+	local butt = follower_counters[frame]
+	if mission.numFollowers == 1 then
+		butt.icon:SetTexture(SOLO_TEXTURE)
+	else
+		butt.icon:SetTexture(GROUP_TEXTURE)
+	end
 
+	frame.Title:SetPoint("TOP", 0, -15)
+	
 	if ns.is_six_one then
-		frame.Title:SetPoint("TOP", 0, -15)
 		frame.Title:SetText(mission.name:gsub("Exploration: ", ""))
 
 		local exp = expire_strings[frame]
