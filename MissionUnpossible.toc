@@ -21,6 +21,7 @@ FollowerClick.lua
 FollowerSummary.lua
 FollowerTimeLeft.lua
 FollowerUpgrades.lua
+LevelingSummary.lua
 MissionList.lua
 MissionPageCloseBinding.lua
 MissionsComplete.lua

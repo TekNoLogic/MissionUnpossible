@@ -68,7 +68,7 @@ local function FollowerHasExtraTraining(follower)
 end
 
 
-local function FollowerToString(follower)
+function ns.FollowerToString(follower)
 	local level = ITEM_QUALITY_COLORS[follower.quality].hex.. follower.level
 	if follower.level == 100 then
 		level = ITEM_QUALITY_COLORS[follower.quality].hex.. follower.iLevel
@@ -100,7 +100,7 @@ local function GetFollowerListForMechanic(mechanic)
 	local str = ""
 	for i,follower in pairs(followers) do
 		if FollowerCanCounter(follower, mechanic) then
-			str = str.. "\n".. FollowerToString(follower)
+			str = str.. "\n".. ns.FollowerToString(follower)
 		end
 	end
 	return str
