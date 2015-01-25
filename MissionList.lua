@@ -127,8 +127,7 @@ local follower_counters = setmetatable({}, {
 	__index = function(t,i)
 		local butt = CreateFrame("Frame", nil, i)
 		butt:SetSize(28, 28)
-		butt:SetPoint("LEFT", i.Title)
-		butt:SetPoint("BOTTOM", 0, 7)
+		butt:SetPoint("RIGHT", i.Title, "LEFT", -10, 0)
 
 		local icon = butt:CreateTexture(nil, "BORDER")
 		icon:SetAllPoints()
@@ -144,7 +143,8 @@ local follower_counters = setmetatable({}, {
 local expire_strings = setmetatable({}, {
 	__index = function(t,i)
 		local fs = i:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-		fs:SetPoint("LEFT", follower_counters[i], "RIGHT", 10, 0)
+		fs:SetPoint("LEFT", i.Title)
+		fs:SetPoint("BOTTOM", 0, 15)
 		fs:SetTextColor(.7, .7, .7, 1)
 		t[i] = fs
 		return fs
@@ -167,9 +167,10 @@ local function UpdateMission(frame)
 		butt.icon:SetTexture(GROUP_TEXTURE)
 	end
 
-	frame.Title:SetPoint("TOP", 0, -15)
-	
+	frame.Title:SetPoint("LEFT", 165 + 30, 0)
+
 	if ns.is_six_one then
+		frame.Title:SetPoint("TOP", 0, -15)
 		frame.Title:SetText(mission.name:gsub("Exploration: ", ""))
 
 		local exp = expire_strings[frame]
