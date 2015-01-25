@@ -123,6 +123,18 @@ local function SetReward(frame, rewards)
 end
 
 
+local expire_strings = setmetatable({}, {
+	__index = function(t,i)
+		local fs = i:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+		fs:SetPoint("BOTTOM", 0, 15)
+		fs:SetPoint("LEFT", i.Title)
+		fs:SetTextColor(.7, .7, .7, 1)
+		t[i] = fs
+		return fs
+	end
+})
+
+
 local function UpdateMission(frame)
 	local mission = frame.info
 	if not mission then return end
@@ -130,6 +142,13 @@ local function UpdateMission(frame)
 	wipe(usedbuffs)
 
 	frame.Level:SetText(mission.level.. "\nx".. mission.numFollowers)
+
+	if ns.is_six_one then
+		frame.Title:SetPoint("TOP", 0, -15)
+
+		local exp = expire_strings[frame]
+		exp:SetText(GARRISON_MISSION_AVAILABILITY.. ": ".. mission.offerTimeRemaining)
+	end
 
 	for i,rewardframe in pairs(frame.Rewards) do
 		SetReward(rewardframe, mission.rewards)
