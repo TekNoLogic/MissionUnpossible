@@ -145,6 +145,7 @@ local function UpdateMission(frame)
 
 	if ns.is_six_one then
 		frame.Title:SetPoint("TOP", 0, -15)
+		frame.Title:SetText(mission.name:gsub("Exploration: ", ""))
 
 		local exp = expire_strings[frame]
 		exp:SetText(GARRISON_MISSION_AVAILABILITY.. ": ".. mission.offerTimeRemaining)
