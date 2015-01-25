@@ -152,8 +152,11 @@ local expire_strings = setmetatable({}, {
 })
 
 
-local SOLO_TEXTURE = "Interface\\Icons\\sha_spell_warlock_demonsoul"
-local GROUP_TEXTURE = "Interface\\Icons\\achievement_guildperk_everybodysfriend"
+local ICONS = {
+	"Interface\\Icons\\sha_spell_warlock_demonsoul",
+ 	"Interface\\Icons\\Racechange",
+	"Interface\\Icons\\achievement_guildperk_everybodysfriend",
+}
 local function UpdateMission(frame)
 	local mission = frame.info
 	if not mission then return end
@@ -161,11 +164,7 @@ local function UpdateMission(frame)
 	wipe(usedbuffs)
 
 	local butt = follower_counters[frame]
-	if mission.numFollowers == 1 then
-		butt.icon:SetTexture(SOLO_TEXTURE)
-	else
-		butt.icon:SetTexture(GROUP_TEXTURE)
-	end
+	butt.icon:SetTexture(ICONS[mission.numFollowers])
 
 	frame.Title:SetPoint("LEFT", 165 + 30, 0)
 
