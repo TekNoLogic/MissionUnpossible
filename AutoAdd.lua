@@ -23,6 +23,16 @@ local function GetFollowerWithBuff(mechanic, level)
 		end
 	end
 
+	-- Remove buffs that a double-matched follower covers so we don't add
+	-- another follower that is not needed
+	if follower then
+		for i,buff in pairs(buffed[follower]) do
+			if buff.name ~= mechanic then
+				counters[buff.name] = counters[buff.name] - 1
+			end
+		end
+	end
+
 	return follower
 end
 
