@@ -1,0 +1,26 @@
+
+local myname, ns = ...
+
+
+hooksecurefunc("GarrisonFollowerList_Update", function(self)
+	local followers = self.FollowerList.followers
+	local followersList = self.FollowerList.followersList
+
+	local scrollFrame = self.FollowerList.listScroll
+	local offset = HybridScrollFrame_GetOffset(scrollFrame)
+
+	for i,button in pairs(scrollFrame.buttons) do
+		local index = offset + i
+		if index <= #followersList then
+			local follower = followers[followersList[index]]
+			TEKFOL = follower
+			if not follower.status and (follower.level < 100 or follower.quality < 4) then
+				button.Name:SetPoint("LEFT", button.PortraitFrame, "LEFT", 66, 8)
+
+				button.Status:SetText(GARRISON_FOLLOWER_TOOLTIP_XP:format(follower.levelXP))
+
+				button.XPBar:SetTexture(94/256, 50/256, 119/256)
+			end
+		end
+	end
+end)
