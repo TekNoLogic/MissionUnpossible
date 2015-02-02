@@ -17,7 +17,8 @@ hooksecurefunc("GarrisonFollowerList_Update", function(self)
 			if not follower.status and (follower.level < 100 or follower.quality < 4) then
 				button.Name:SetPoint("LEFT", button.PortraitFrame, "LEFT", 66, 8)
 
-				button.Status:SetText(GARRISON_FOLLOWER_TOOLTIP_XP:format(follower.levelXP))
+				local tnl = follower.levelXP - follower.xp
+				button.Status:SetText(GARRISON_FOLLOWER_TOOLTIP_XP:format(tnl))
 
 				button.XPBar:SetTexture(94/256, 50/256, 119/256)
 			end
