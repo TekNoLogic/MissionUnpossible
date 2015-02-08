@@ -225,6 +225,11 @@ hooksecurefunc("GarrisonMissionList_Update", GarrisonMissionList_Update)
 hooksecurefunc(GarrisonMissionFrame.MissionTab.MissionList.listScroll, "update", GarrisonMissionList_Update)
 
 
+local function HideTooltip(self, button)
+	if not self.info.inProgress then GameTooltip:Hide() end
+end
+
+hooksecurefunc("GarrisonMissionButton_OnEnter", HideTooltip)
 for _,butt in pairs(MissionList.listScroll.buttons) do
-	butt:SetScript("OnEnter", nil)
+	butt:HookScript("OnEnter", HideTooltip)
 end
