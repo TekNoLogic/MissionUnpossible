@@ -165,6 +165,7 @@ local function UpdateMission(frame)
 
 	local butt = follower_counters[frame]
 	butt.icon:SetTexture(ICONS[mission.numFollowers])
+	butt:Show()
 
 	frame.Title:SetPoint("LEFT", 165 + 30, 0)
 
@@ -213,10 +214,12 @@ local MissionList = GarrisonMissionFrame.MissionTab.MissionList
 local function GarrisonMissionList_Update()
 	ns.HideBossMechanicFrames()
 
-	if MissionList.showInProgress then return end
-
-	for i,button in pairs(MissionList.listScroll.buttons) do
-		UpdateMission(button)
+	if MissionList.showInProgress then
+		for i,butt in pairs(follower_counters) do butt:Hide() end
+	else
+		for i,button in pairs(MissionList.listScroll.buttons) do
+			UpdateMission(button)
+		end
 	end
 end
 
