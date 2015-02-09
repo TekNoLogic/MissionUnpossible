@@ -57,11 +57,15 @@ local function FollowerHasExtraTraining(follower)
 end
 
 
+local qualities = {"C", "U", "R", "E", "L"}
 function ns.FollowerToString(follower)
 	local level = ITEM_QUALITY_COLORS[follower.quality].hex.. follower.level
 	if follower.level == 100 then
 		level = ITEM_QUALITY_COLORS[follower.quality].hex.. follower.iLevel
 	end
+
+	local colorblind = GetCVarBool("colorblindMode")
+	if colorblind then level = level.. "-".. qualities[follower.quality] end
 
 	local name = follower.name
 	if FollowerHasScavenger(follower) then name = name.. " [$$]" end
