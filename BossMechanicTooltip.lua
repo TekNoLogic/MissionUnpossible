@@ -2,17 +2,6 @@
 local myname, ns = ...
 
 
-local tip = GarrisonMissionMechanicTooltip
-local f = CreateFrame("Frame", nil, tip)
-
-
-local function ResizeTooltip()
-	local height = tip.Icon:GetHeight() + 28
-	height = height + tip.Description:GetHeight()
-	tip:SetHeight(height)
-end
-
-
 local function SortFollowers(a, b)
 	if not a then return false end
 	if not b then return true end
@@ -79,44 +68,49 @@ function ns.FollowerToString(follower)
 	if FollowerHasExtraTraining(follower) then name = name.. " [++]" end
 
 	if ns.IsFollowerAvailable(follower.followerID) then
-		return level.. "|cffffffff - ".. name
+		return level.. "|cffffffff - ".. name.. "|r"
 	else
-		local namestr = level.. ITEM_QUALITY_COLORS[0].hex.. " - ".. name
+		local namestr = level.. ITEM_QUALITY_COLORS[0].hex.. " - ".. name.. "|r"
 		local status = C_Garrison.GetFollowerStatus(follower.followerID)
 
 		if status == GARRISON_FOLLOWER_ON_MISSION then
 			local timeleft = ns.GetFollowerTimeLeft(follower.followerID)
 			if timeleft then
-				return namestr.. " (".. timeleft.. ")|r"
+				return namestr, timeleft
 			end
 		end
 
-		return namestr.. " (".. status.. ")|r"
+		return namestr, ITEM_QUALITY_COLORS[0].hex..status.."|r"
 	end
 end
 
 
-local function GetFollowerListForMechanic(mechanic)
-	local str = ""
-	for i,follower in pairs(followers) do
-		if FollowerCanCounter(follower, mechanic) then
-			str = str.. "\n".. ns.FollowerToString(follower)
-		end
-	end
-	return str
-end
+local f = CreateFrame("Frame")
+f:SetScript("OnHide", GameTooltip_Hide)
 
 
-f:SetScript("OnShow", function(self)
+local tip = GarrisonMissionMechanicTooltip
+function tip.Show()
 	RefreshFollowers()
 	ns.RefreshInProgress()
 
+	local _, anchor = tip:GetPoint(1)
 	local mechanic = tip.Name:GetText()
-
-
 	local desc = tip.Description:GetText()
-	desc = desc.. "|cffffffff\n".. GetFollowerListForMechanic(mechanic)
-	tip.Description:SetText(desc)
 
-	ResizeTooltip()
-end)
+	f:SetParent(anchor)
+
+	GameTooltip:SetOwner(anchor, "ANCHOR_BOTTOMLEFT")
+	GameTooltip:AddLine(mechanic, 1,1,1)
+	GameTooltip:AddLine(desc, nil,nil,nil, true)
+	GameTooltip:AddLine(" ")
+
+	for i,follower in pairs(followers) do
+		if FollowerCanCounter(follower, mechanic) then
+			local name, status = ns.FollowerToString(follower)
+			GameTooltip:AddDoubleLine(name, status, nil,nil,nil, 1,1,1)
+		end
+	end
+
+	GameTooltip:Show()
+end

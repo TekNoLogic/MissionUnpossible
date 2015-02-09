@@ -31,7 +31,8 @@ butt:SetScript("OnEnter", function(self)
 
 	for i,follower in pairs(followers) do
 		if IsFollowerLeveling(follower) then
-			GameTooltip:AddLine(ns.FollowerToString(follower))
+			local name, status = ns.FollowerToString(follower)
+			GameTooltip:AddDoubleLine(name, status, nil,nil,nil, 1,1,1)
 		end
 	end
 
