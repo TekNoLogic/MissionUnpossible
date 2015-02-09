@@ -57,6 +57,11 @@ local function FollowerHasExtraTraining(follower)
 end
 
 
+local function FollowerHasEpicMount(follower)
+	return FollowerHasAbilityID(follower, 221)
+end
+
+
 local qualities = {"C", "U", "R", "E", "L"}
 function ns.FollowerToString(follower)
 	local level = ITEM_QUALITY_COLORS[follower.quality].hex.. follower.level
@@ -70,6 +75,7 @@ function ns.FollowerToString(follower)
 	local name = follower.name
 	if FollowerHasScavenger(follower) then name = name.. " [$$]" end
 	if FollowerHasExtraTraining(follower) then name = name.. " [++]" end
+	if FollowerHasEpicMount(follower) then name = name.. " [>>]" end
 
 	if ns.IsFollowerAvailable(follower.followerID) then
 		return level.. "|cffffffff - ".. name.. "|r"
