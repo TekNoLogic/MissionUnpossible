@@ -109,6 +109,7 @@ function tip.Show()
 	local desc = tip.Description:GetText()
 
 	f:SetParent(anchor)
+	anchor:SetScript("OnLeave", GameTooltip_Hide)
 
 	GameTooltip:SetOwner(anchor, "ANCHOR_BOTTOMLEFT")
 	GameTooltip:AddLine(mechanic, 1,1,1)
