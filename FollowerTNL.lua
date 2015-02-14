@@ -2,13 +2,6 @@
 local myname, ns = ...
 
 
-local function FollowerLeveling(follower)
-	if not follower.collected then return false end
-	if follower.status then return false end
-	return follower.level < 100 or follower.quality < 4
-end
-
-
 hooksecurefunc("GarrisonFollowerList_Update", function(self)
 	local followers = self.FollowerList.followers
 	local followersList = self.FollowerList.followersList
@@ -20,7 +13,7 @@ hooksecurefunc("GarrisonFollowerList_Update", function(self)
 		local index = offset + i
 		if index <= #followersList then
 			local follower = followers[followersList[index]]
-			if FollowerLeveling(follower) then
+			if ns.IsFollowerLeveling(follower) and not follower.status then
 				button.Name:SetPoint("LEFT", button.PortraitFrame, "LEFT", 66, 8)
 
 				local tnl = follower.levelXP - follower.xp

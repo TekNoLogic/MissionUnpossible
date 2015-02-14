@@ -2,7 +2,7 @@
 local myname, ns = ...
 
 
-local function IsFollowerLeveling(follower)
+function ns.IsFollowerLeveling(follower)
 	if not follower.isCollected then return false end
 	if follower.quality < 4 then return true end
 	if follower.level < 100 then return true end
@@ -30,7 +30,7 @@ butt:SetScript("OnEnter", function(self)
 	GameTooltip:AddLine("Followers currently leveling")
 
 	for i,follower in pairs(followers) do
-		if IsFollowerLeveling(follower) then
+		if ns.IsFollowerLeveling(follower) then
 			local name, status = ns.FollowerToString(follower)
 			GameTooltip:AddDoubleLine(name, status, nil,nil,nil, 1,1,1)
 		end
