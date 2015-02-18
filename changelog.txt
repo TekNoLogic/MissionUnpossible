@@ -1,3 +1,18 @@
+6.0.0.3-Beta
+    Add leveling followers summary
+    Lighten follower XP bar, add TNL text
+    Add icon for group vs solo mission
+    Auto-add leveling followers on <lv100 missions
+    Don't double-add when one follower meets two needs
+    Add epic mount to follower summaries
+    Add colorblind mode to follower tooltip
+    Replace bastard GarrisonMissionMechanicTooltip
+    Less invasive method of hiding mision list tooltip
+    Better icon for the leveling summary
+    Remove functionality in 6.1 that is now default
+    Add mission expire time on 6.1
+    Strip long mission names on 6.1
+
 6.0.0.2-Beta
     Add handy text to rewards in list
     Push rewards into chat frames directly
