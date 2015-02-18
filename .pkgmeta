@@ -1,0 +1,8 @@
+package-as: MissionUnpossible
+enable-nolib-creation: no
+ignore:
+  - README.md
+  - externals.txt
+manual-changelog:
+  filename: changelog.txt
+  markup-type: markdown
