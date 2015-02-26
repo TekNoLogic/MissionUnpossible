@@ -19,6 +19,7 @@ AutoAdd.lua
 BossMechanicFrames.lua
 BossMechanicTooltip.lua
 FollowerClick.lua
+FollowerSearch.lua
 FollowerTimeLeft.lua
 FollowerTNL.lua
 FollowerUpgrades.lua
