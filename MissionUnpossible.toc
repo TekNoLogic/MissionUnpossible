@@ -19,11 +19,9 @@ AutoAdd.lua
 BossMechanicFrames.lua
 BossMechanicTooltip.lua
 FollowerClick.lua
-FollowerSummary.lua
 FollowerTimeLeft.lua
 FollowerTNL.lua
 FollowerUpgrades.lua
 LevelingSummary.lua
 MissionList.lua
-MissionPageCloseBinding.lua
 MissionsComplete.lua

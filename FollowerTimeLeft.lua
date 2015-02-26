@@ -16,30 +16,3 @@ function ns.GetFollowerTimeLeft(followerID)
 		end
 	end
 end
-
-
-if ns.is_six_one then return end
-
-
-hooksecurefunc("GarrisonFollowerList_Update", function(self)
-	ns.RefreshInProgress()
-
-	local followers = self.FollowerList.followers
-	local followersList = self.FollowerList.followersList
-
-	local scrollFrame = self.FollowerList.listScroll
-	local offset = HybridScrollFrame_GetOffset(scrollFrame)
-
-	for i,button in pairs(scrollFrame.buttons) do
-		local index = offset + i
-		if index <= #followersList then
-			local follower = followers[followersList[index]]
-			if follower.status == GARRISON_FOLLOWER_ON_MISSION then
-				local timeLeft = ns.GetFollowerTimeLeft(follower.followerID)
-				if timeLeft then
-					button.Status:SetText(follower.status.. " (".. timeLeft.. ")")
-				end
-			end
-		end
-	end
-end)

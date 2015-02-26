@@ -90,30 +90,11 @@ local function SetReward(frame, rewards)
 
 
 	local text
-	if ns.is_six_one then
-		if reward.itemID == 120205 then
-			text = "3.5%"
-		elseif reward.itemID and reward.quantity == 1 then
-			local _, _, qual, ilvl = GetItemInfo(reward.itemID)
-			if (ilvl or 0) > 500 then text = ilvl end
-		end
-	else
-		if reward.followerXP then
-			if reward.followerXP > 2000 then
-				text = (reward.followerXP / 1000).. "k"
-			else
-				text = reward.followerXP
-			end
-		elseif reward.itemID == 120205 then
-			text = "3.5%"
-		elseif reward.itemID and reward.quantity == 1 then
-			local _, _, qual, ilvl = GetItemInfo(reward.itemID)
-			if (ilvl or 0) > 500 then text = ilvl end
-		elseif reward.currencyID == 0 then
-			text = (reward.quantity / 10000).. "g"
-		elseif reward.currencyID then
-			text = reward.quantity
-		end
+	if reward.itemID == 120205 then
+		text = "3.5%"
+	elseif reward.itemID and reward.quantity == 1 then
+		local _, _, qual, ilvl = GetItemInfo(reward.itemID)
+		if (ilvl or 0) > 500 then text = ilvl end
 	end
 
 	if text then
@@ -169,13 +150,11 @@ local function UpdateMission(frame)
 
 	frame.Title:SetPoint("LEFT", 165 + 30, 0)
 
-	if ns.is_six_one then
-		frame.Title:SetPoint("TOP", 0, -15)
-		frame.Title:SetText(mission.name:gsub("Exploration: ", ""))
+	frame.Title:SetPoint("TOP", 0, -15)
+	frame.Title:SetText(mission.name:gsub("Exploration: ", ""))
 
-		local exp = expire_strings[frame]
-		exp:SetText(GARRISON_MISSION_AVAILABILITY.. ": ".. mission.offerTimeRemaining)
-	end
+	local exp = expire_strings[frame]
+	exp:SetText(GARRISON_MISSION_AVAILABILITY.. ": ".. mission.offerTimeRemaining)
 
 	for i,rewardframe in pairs(frame.Rewards) do
 		SetReward(rewardframe, mission.rewards)
