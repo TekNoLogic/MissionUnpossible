@@ -31,19 +31,51 @@ local function CanCounter(follower, mechanic)
     local abilityID = GetAbility(follower.followerID, i)
     if abilityID and abilityID > 0 then
       local mechanicID, name, tex = GetMechanic(abilityID)
-      if mechanicID == mechanic then
-        return "|T".. tex.. ":16|t"
-      end
+      if mechanicID == mechanic then return tex end
     end
   end
+end
 
+
+local function CounterText(follower, mechanic)
+  local tex = CanCounter(follower, mechanic)
+  if tex then return "|T".. tex.. ":16|t"end
   return " "
 end
 
 
+local function FirstAbility(follower)
+  if not IsMaxLevel(follower) then return 999 end
+
+  for i=1,10 do
+    if i ~= 5 and CanCounter(follower, i) then return i end
+  end
+end
+
+
+local function LastAbility(follower)
+  if not IsMaxLevel(follower) then return 999 end
+
+  for i=10,1,-1 do
+    if i ~= 5 and CanCounter(follower, i) then return i end
+  end
+end
+
+
+local function sorter(a,b)
+  local fa = FirstAbility(a)
+  local fb = FirstAbility(b)
+  if fa == fb then
+    return LastAbility(a) > LastAbility(b)
+  else
+    return fa < fb
+  end
+end
+
 butt:SetScript("OnLeave", function() tip:Hide() end)
 butt:SetScript("OnEnter", function(self)
   local followers = C_Garrison.GetFollowers()
+  table.sort(followers, sorter)
 
   -- tip:AnchorTo(self)
   tip:Clear()
@@ -55,15 +87,15 @@ butt:SetScript("OnEnter", function(self)
 
   for i,follower in pairs(followers) do
     if IsMaxLevel(follower) then
-      local wag = CanCounter(follower, 1)  -- Wild Aggression
-      local mst = CanCounter(follower, 2)  -- Massive Strike
-      local gda = CanCounter(follower, 3)  -- Group Damage
-      local mde = CanCounter(follower, 4)  -- Magic Debuff
-      local dzo = CanCounter(follower, 6)  -- Danger Zones
-      local msw = CanCounter(follower, 7)  -- Minion Swarms
-      local psp = CanCounter(follower, 8)  -- Powerful Spell
-      local dmi = CanCounter(follower, 9)  -- Deadly Minions
-      local tba = CanCounter(follower, 10) -- Timed Battle
+      local wag = CounterText(follower, 1)  -- Wild Aggression
+      local mst = CounterText(follower, 2)  -- Massive Strike
+      local gda = CounterText(follower, 3)  -- Group Damage
+      local mde = CounterText(follower, 4)  -- Magic Debuff
+      local dzo = CounterText(follower, 6)  -- Danger Zones
+      local msw = CounterText(follower, 7)  -- Minion Swarms
+      local psp = CounterText(follower, 8)  -- Powerful Spell
+      local dmi = CounterText(follower, 9)  -- Deadly Minions
+      local tba = CounterText(follower, 10) -- Timed Battle
 
       tip:AddMultiLine(follower.name,
                        wag, mst, gda, mde, dzo, msw, psp, dmi, tba,
