@@ -14,7 +14,9 @@ externals\events.lua
 externals\gsc.lua
 externals\print.lua
 externals\ptr.lua
+externals\ui-multicolumn-tooltip.lua
 
+AbilitySummary.lua
 AutoAdd.lua
 BossMechanicFrames.lua
 BossMechanicTooltip.lua
