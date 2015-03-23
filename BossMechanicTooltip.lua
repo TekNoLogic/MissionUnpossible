@@ -52,6 +52,11 @@ local function FollowerHasScavenger(follower)
 end
 
 
+local function FollowerHasTreasureHunter(follower)
+	return FollowerHasAbilityID(follower, 256)
+end
+
+
 local function FollowerHasExtraTraining(follower)
 	return FollowerHasAbilityID(follower, 80)
 end
@@ -73,7 +78,8 @@ function ns.FollowerToString(follower)
 	if colorblind then level = level.. "-".. qualities[follower.quality] end
 
 	local name = follower.name
-	if FollowerHasScavenger(follower) then name = name.. " [$$]" end
+	if FollowerHasScavenger(follower) then name = name.. " [££]" end
+	if FollowerHasTreasureHunter(follower) then name = name.. " [$$]" end
 	if FollowerHasExtraTraining(follower) then name = name.. " [++]" end
 	if FollowerHasEpicMount(follower) then name = name.. " [>>]" end
 
