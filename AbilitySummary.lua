@@ -4,7 +4,7 @@ local myname, ns = ...
 
 local mission = GarrisonMissionFrame.MissionTab.MissionPage
 local search = GarrisonMissionFrame.FollowerList.SearchBox
-local butt = CreateFrame("Frame", nil, mission)
+local butt = CreateFrame("Frame", nil, search)
 butt:SetSize(24, 24)
 butt:SetPoint("LEFT", search, "RIGHT", 15, 5)
 
@@ -41,7 +41,7 @@ local missiondetails
 local GetUncounteredMechanics = C_Garrison.GetMissionUncounteredMechanics
 local function IsShown(follower, mission)
   if not IsMaxLevel(follower) then return false end
-  if mission.iLevel < 645 then return true end
+  if not mission or mission.iLevel < 645 then return true end
 
   if not missiondetails then
     local mechs = GetUncounteredMechanics(mission.missionID)
