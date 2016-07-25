@@ -30,7 +30,7 @@ local function Update()
 	end
 end
 ns.RegisterEvent("BAG_UPDATE_DELAYED", Update)
-hooksecurefunc(GarrisonFollowerList, "ShowFollower", Update)
+hooksecurefunc(GarrisonMissionFrame.FollowerTab, "ShowFollower", Update)
 
 
 local function OnEnter(self)
