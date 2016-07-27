@@ -3,7 +3,7 @@ local myname, ns = ...
 
 local inprogress
 function ns.RefreshInProgress()
-	inprogress = C_Garrison.GetInProgressMissions()
+	inprogress = C_Garrison.GetInProgressMissions(LE_FOLLOWER_TYPE_GARRISON_6_0)
 end
 
 
