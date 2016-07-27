@@ -90,12 +90,13 @@ end
 ns.RegisterEvent("GARRISON_MISSION_COMPLETE_RESPONSE")
 
 
-function ns.GARRISON_FOLLOWER_XP_CHANGED(event, followerID, xpAward, oldXP, oldLevel, oldQuality)
-	ns.Debug(event, followerID, xpAward, oldXP, oldLevel, oldQuality)
+function ns.GARRISON_FOLLOWER_XP_CHANGED(event, followerTypeID, followerID, xpAward, oldXP, oldLevel, oldQuality)
+	ns.Debug(event, followerTypeID, followerID, xpAward, oldXP, oldLevel, oldQuality)
 	ns.Debug("C_Garrison.GetFollowerMissionCompleteInfo", C_Garrison.GetFollowerMissionCompleteInfo(followerID))
 
-	local name, displayID, level, quality, currXP, maxXP =
-		C_Garrison.GetFollowerMissionCompleteInfo(followerID)
+	local name = C_Garrison.GetFollowerName(followerID)
+	local level = C_Garrison.GetFollowerLevel(followerID)
+	local quality = C_Garrison.GetFollowerQuality(followerID)
 
 	local color = ITEM_QUALITY_COLORS[quality].hex
 	if xpAward > 0 then
