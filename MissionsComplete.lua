@@ -8,7 +8,7 @@ local mission
 local function CompleteMissions()
 	rolling = true
 
-	local missions = C_Garrison.GetCompleteMissions()
+	local missions = C_Garrison.GetCompleteMissions(LE_FOLLOWER_TYPE_GARRISON_6_0)
 	mission = missions[1]
 	if not mission then
 		GarrisonMissionFrame.MissionTab.MissionList.CompleteDialog:Hide()
@@ -44,7 +44,7 @@ butt:SetScript("OnClick", CompleteMissions)
 
 local function CacheDatas()
 	ns.Debug("Caching mission data")
-	local missions = C_Garrison.GetCompleteMissions()
+	local missions = C_Garrison.GetCompleteMissions(LE_FOLLOWER_TYPE_GARRISON_6_0)
 	for i,mission in pairs(missions) do
 		for id,reward in pairs(mission.rewards) do
 			if reward.itemID then
