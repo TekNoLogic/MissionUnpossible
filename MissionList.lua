@@ -21,7 +21,7 @@ local function GetCounterText(trait, mission)
 	local missionid = mission.missionID
 	local missionlevel = mission.level
 
-	local buffed = C_Garrison.GetBuffedFollowersForMission(mission.missionID)
+	local buffed = C_Garrison.GetBuffedFollowersForMission(mission.missionID, false)
 	for guid,buffs in pairs(buffed) do
 		for i,buff in pairs(buffs) do
 			if buff.name == trait then
@@ -163,7 +163,7 @@ local function UpdateMission(frame)
 	local _, _, _, _, _, _, _, missionbosses = C_Garrison.GetMissionInfo(missionID)
 	if not missionbosses then return end
 
-	local anchor = frame.Rewards[mission.numRewards]
+	local anchor = frame.Rewards[#mission.rewards]
 	local lastframe
 	for _,boss in pairs(missionbosses) do
 		for _,mechanic in pairs(boss.mechanics) do
@@ -203,7 +203,7 @@ local function GarrisonMissionList_Update()
 end
 
 
-hooksecurefunc("GarrisonMissionList_Update", GarrisonMissionList_Update)
+hooksecurefunc(GarrisonMission, "OnShowMainFrame", GarrisonMissionList_Update)
 hooksecurefunc(GarrisonMissionFrame.MissionTab.MissionList.listScroll, "update", GarrisonMissionList_Update)
 
 
