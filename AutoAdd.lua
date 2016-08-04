@@ -55,18 +55,20 @@ end
 
 
 local dirty = false
-hooksecurefunc("GarrisonMissionPage_ShowMission", function() dirty = true end)
-hooksecurefunc("GarrisonFollowerList_UpdateFollowers", function()
+
+local MissionPage = GarrisonMissionFrame.MissionTab.MissionPage
+hooksecurefunc(GarrisonMissionFrame, "ShowMission", function() dirty = true end)
+hooksecurefunc(GarrisonMissionFrame.FollowerList, "UpdateData", function(self)
 	if not dirty then return end
 	dirty = false
 
-	local mission = GarrisonMissionFrame.MissionTab.MissionPage.missionInfo
+	local mission = MissionPage.missionInfo
 
 	wipe(counters)
 
 	local needed = mission.numFollowers
 	local _, _, _, _, _, _, _, missionbosses = C_Garrison.GetMissionInfo(mission.missionID)
-	buffed = C_Garrison.GetBuffedFollowersForMission(mission.missionID)
+	buffed = C_Garrison.GetBuffedFollowersForMission(mission.missionID, false)
 
 	for _,boss in pairs(missionbosses) do
 		for _,mechanic in pairs(boss.mechanics) do
@@ -79,19 +81,19 @@ hooksecurefunc("GarrisonFollowerList_UpdateFollowers", function()
 			local guid = GetFollowerWithBuff(mechanic.name, mission.level)
 			if guid then
 				needed = needed - 1
-				GarrisonMissionPage_AddFollower(guid)
+				MissionPage:AddFollower(guid)
 			end
 		end
 	end
 
 	if needed == 0 or mission.level == 100 then return end
 
-	followers = C_Garrison.GetFollowers()
+	followers = C_Garrison.GetFollowers(LE_FOLLOWER_TYPE_GARRISON_6_0)
 	if NumPotentialFollowers(mission.level) > needed then return end
 
 	for _,follower in pairs(followers) do
 		if EligibleFollower(follower, mission.level) then
-			GarrisonMissionPage_AddFollower(follower.followerID)
+			MissionPage:AddFollower(follower.followerID)
 		end
 	end
 end)
