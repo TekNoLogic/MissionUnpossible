@@ -135,7 +135,7 @@ butt:SetScript("OnEnter", function(self)
   local mission = GarrisonMissionFrame.MissionTab.MissionPage.missionInfo
   missiondetails = nil
 
-  local followers = C_Garrison.GetFollowers()
+  local followers = C_Garrison.GetFollowers(LE_FOLLOWER_TYPE_GARRISON_6_0)
   table.sort(followers, sorter)
 
   -- tip:AnchorTo(self)

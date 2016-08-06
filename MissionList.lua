@@ -170,6 +170,7 @@ local function UpdateMission(frame)
 			local mech = ns.GetBossMechanicFrame()
 
 			mech.info = mechanic
+			mech.followerTypeID = LE_FOLLOWER_TYPE_GARRISON_6_0
 
 			mech.Icon:SetTexture(mechanic.icon)
 			mech.label:SetText(GetCounterText(mechanic.name, mission))

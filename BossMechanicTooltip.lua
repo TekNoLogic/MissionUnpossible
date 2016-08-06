@@ -16,7 +16,7 @@ end
 
 local followers
 local function RefreshFollowers()
-	followers = C_Garrison.GetFollowers()
+	followers = C_Garrison.GetFollowers(LE_FOLLOWER_TYPE_GARRISON_6_0)
 	table.sort(followers, SortFollowers)
 end
 
