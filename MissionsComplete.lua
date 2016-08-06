@@ -2,7 +2,8 @@
 local myname, ns = ...
 
 
-local TURNIN_DELAY = 0.8
+local bf = GarrisonMissionFrameMissions.CompleteDialog.BorderFrame
+local TURNIN_DELAY = 0.4
 local rolling = false
 local mission
 local function CompleteMissions()
@@ -11,12 +12,6 @@ local function CompleteMissions()
 	local missions = C_Garrison.GetCompleteMissions(LE_FOLLOWER_TYPE_GARRISON_6_0)
 	mission = missions[1]
 	if not mission then
-		GarrisonMissionFrame.MissionTab.MissionList.CompleteDialog:Hide()
-		GarrisonMissionFrame.MissionComplete.currentIndex = 1
-		GarrisonMissionFrame.MissionComplete.completeMissions = {}
-		GarrisonMissionComplete_Initialize(GarrisonMissionFrame.MissionComplete.completeMissions, 1)
-		GarrisonMissionFrame.MissionComplete.NextMissionButton.returnToOverview = false
-
 		rolling = false
 		return
 	end
@@ -24,22 +19,29 @@ local function CompleteMissions()
 	local _, _, _, chance = C_Garrison.GetPartyMissionInfo(mission.missionID)
 	mission.successchance = chance
 
-	if mission.state == -1 then
-		ns.Debug("Marking mission complete", mission.missionID)
-		C_Garrison.MarkMissionComplete(mission.missionID)
-	else
-		ns.Debug("Mission success, rolling", mission.missionID)
-		C_Garrison.MissionBonusRoll(mission.missionID)
-	end
+	GarrisonMissionFrame.MissionComplete:OnSkipKeyPressed("SPACE")
 end
 
 
-local bf = GarrisonMissionFrameMissions.CompleteDialog.BorderFrame
+local function BeginCompletion()
+	rolling = true
+
+	local missions = C_Garrison.GetCompleteMissions(LE_FOLLOWER_TYPE_GARRISON_6_0)
+	mission = missions[1]
+	assert(mission, "No missions available to complete")
+
+	local _, _, _, chance = C_Garrison.GetPartyMissionInfo(mission.missionID)
+	mission.successchance = chance
+
+	bf.ViewButton:Click()
+end
+
+
 local butt = CreateFrame("Button", nil, bf, "UIPanelButtonTemplate")
 butt:SetWidth(209)
 butt:SetText("Complete All")
 butt:SetPoint("TOP", bf.ViewButton, "BOTTOM", 0, -10)
-butt:SetScript("OnClick", CompleteMissions)
+butt:SetScript("OnClick", BeginCompletion)
 
 
 local function CacheDatas()
@@ -81,11 +83,7 @@ function ns.GARRISON_MISSION_COMPLETE_RESPONSE(event, missionID, canComplete, su
 
 	ns.Printf("Mission %q %s (%s%% chance)", mission.name, outcome, chance)
 
-	if succeeded then
-		C_Garrison.MissionBonusRoll(missionID)
-	else
-		C_Timer.After(TURNIN_DELAY, CompleteMissions)
-	end
+	C_Timer.After(TURNIN_DELAY, CompleteMissions)
 end
 ns.RegisterEvent("GARRISON_MISSION_COMPLETE_RESPONSE")
 
