@@ -3,7 +3,7 @@ local myname, ns = ...
 
 
 local bf = GarrisonMissionFrameMissions.CompleteDialog.BorderFrame
-local TURNIN_DELAY = 0.4
+local TURNIN_DELAY = 0.1
 local rolling = false
 local mission
 local function CompleteMissions()
