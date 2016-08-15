@@ -1,3 +1,24 @@
+### 7.0.0.5-Beta
+
+* Fix some broken tooltips
+* Fix up "complete all missions" module
+* Fix auto-add
+* Fix mission list
+* Repair follower TNL
+* Fix "followers currently leveling" tooltip
+* Fix chat reporting of follower mission rewards
+* Fix errors thrown by mission complete
+* Fix follower upgrades
+* Fix follower right click
+* Show the summary button on the follower page too
+* Add treasure hunter to summary tooltips
+* Add race and env bonuses
+* Sort the new list
+* Add epic follower ability summary
+* Clear the follower search when opening missions
+* Remove 6.0 codes
+
+
 ## 6.0.0.4-Beta
 
 * Add .pkgmeta for wowace
