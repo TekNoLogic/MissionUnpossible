@@ -1,6 +1,0 @@
-debug.lua
-events.lua
-gsc.lua
-print.lua
-ptr.lua
-ui-multicolumn-tooltip.lua
