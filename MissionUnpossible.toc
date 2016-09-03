@@ -27,4 +27,5 @@ FollowerTNL.lua
 FollowerUpgrades.lua
 LevelingSummary.lua
 MissionList.lua
+MissionListBossMechanics.lua
 MissionsComplete.lua
