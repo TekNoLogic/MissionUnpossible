@@ -3,6 +3,7 @@ local myname, ns = ...
 
 
 local frame = CreateFrame("Frame")
+ns.OnLoad = {}
 
 
 function ns.RegisterEvent(event, func)

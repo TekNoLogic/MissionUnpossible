@@ -61,11 +61,10 @@ end
 ns.OnLoad.MissionsComplete = CacheDatas
 
 
-function ns.GARRISON_MISSION_NPC_OPENED.MissionsComplete(...)
+ns.RegisterEvent("GARRISON_MISSION_NPC_OPENED", function(...)
 	ns.Debug(...)
 	CacheDatas()
-end
-ns.RegisterEvent("GARRISON_MISSION_NPC_OPENED")
+end)
 
 
 local SUCCESS = ITEM_QUALITY_COLORS[2].hex.. "successful|r"
