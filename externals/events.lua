@@ -7,7 +7,15 @@ local frame = CreateFrame("Frame")
 
 function ns.RegisterEvent(event, func)
   frame:RegisterEvent(event)
-  if func then ns[event] = func end
+  if func then
+    if type(ns[event]) == "table" then
+      table.insert(ns[event], func)
+    elseif type(ns[event]) == "function" then
+      ns[event] = {ns[event], func}
+    else
+      ns[event] = func
+    end
+  end
 end
 
 
@@ -53,10 +61,12 @@ local function ProcessOnLoad(arg1)
     ns.dbpc = _G[ns.dbpcname]
   end
 
-  if ns.OnLoad then
+  if type(ns.OnLoad) == "table" then
+    for _,func in pairs(ns.OnLoad) do func() end
+  elseif type(ns.OnLoad) == "function" then
     ns.OnLoad()
-    ns.OnLoad = nil
   end
+  ns.OnLoad = nil
 
   ProcessOnLoad = nil
   if not ns.ADDON_LOADED then frame:UnregisterEvent("ADDON_LOADED") end
@@ -90,5 +100,10 @@ frame:SetScript("OnEvent", function(self, event, arg1, ...)
   if ProcessOnLogin and event == "PLAYER_LOGIN" then ProcessOnLogin() end
 
   if event == "PLAYER_LOGOUT" then ProcessLogout() end
-  if ns[event] then ns[event](event, arg1, ...) end
+
+  if type(ns[event]) == "table" then
+    for _,func in pairs(ns[event]) do func(event, arg1, ...) end
+  elseif type(ns[event]) == "function" then
+    ns[event](event, arg1, ...)
+  end
 end)

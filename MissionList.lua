@@ -72,16 +72,19 @@ local ICONS = {
  	"Interface\\Icons\\Racechange",
 	"Interface\\Icons\\achievement_guildperk_everybodysfriend",
 }
-local function UpdateMission(frame)
+local function UpdateMission(frame, show_counter)
 	local mission = frame.info
 	if not mission then return end
 	local missionID = mission.missionID
 
-	local butt = follower_counters[frame]
-	butt.icon:SetTexture(ICONS[mission.numFollowers])
-	butt:Show()
+	if show_counter then
+		local butt = follower_counters[frame]
+		butt.icon:SetTexture(ICONS[mission.numFollowers])
+		butt:Show()
+	end
 
-	frame.Title:SetPoint("LEFT", 165 + 30, 0)
+	local offset = show_counter and 30 or 0
+	frame.Title:SetPoint("LEFT", 165 + offset, 0)
 
 	frame.Title:SetPoint("TOP", 0, -15)
 	frame.Title:SetText(mission.name:gsub("Exploration: ", ""))
@@ -95,29 +98,68 @@ local function UpdateMission(frame)
 end
 
 
-local MissionList = GarrisonMissionFrame.MissionTab.MissionList
-local function GarrisonMissionList_Update()
-	ns.HideBossMechanicFrames()
-
-	if MissionList.showInProgress then
+local mission_lists = {}
+local show_counters = {}
+local function MissionList_Update(self)
+	local list = mission_lists[self]
+	if list.showInProgress then
 		for i,butt in pairs(follower_counters) do butt:Hide() end
 	else
-		for i,button in pairs(MissionList.listScroll.buttons) do
-			UpdateMission(button)
+		for i,button in pairs(list.listScroll.buttons) do
+			local show_counter = show_counters[list]
+			UpdateMission(button, show_counter)
 		end
 	end
 end
-
-
-hooksecurefunc(GarrisonMission, "OnShowMainFrame", GarrisonMissionList_Update)
-hooksecurefunc(GarrisonMissionFrame.MissionTab.MissionList.listScroll, "update", GarrisonMissionList_Update)
 
 
 local function HideTooltip(self, button)
 	if not self.info.inProgress then GameTooltip:Hide() end
 end
 
-hooksecurefunc("GarrisonMissionButton_OnEnter", HideTooltip)
-for _,butt in pairs(MissionList.listScroll.buttons) do
-	butt:HookScript("OnEnter", HideTooltip)
+
+local function InitGarrison()
+	local list = GarrisonMissionFrame.MissionTab.MissionList
+	mission_lists[list] = list
+	mission_lists[list.listScroll] = list
+	show_counters[list] = true
+
+	hooksecurefunc(list.listScroll, "update", MissionList_Update)
+
+	hooksecurefunc("GarrisonMissionButton_OnEnter", HideTooltip)
+	for _,butt in pairs(list.listScroll.buttons) do
+		butt:HookScript("OnEnter", HideTooltip)
+	end
 end
+
+
+local function InitOrderHall()
+	local list = OrderHallMissionFrame.MissionTab.MissionList
+	mission_lists[list] = list
+	mission_lists[list.listScroll] = list
+	show_counters[list] = false
+
+	-- hooksecurefunc(OrderHallMissionFrame, "OnShowMainFrame", MissionList_Update)
+	hooksecurefunc(list.listScroll, "update", MissionList_Update)
+end
+
+
+local OnShow = {
+	-- Draenor garrison
+	[LE_FOLLOWER_TYPE_GARRISON_6_0] = function()
+		if InitGarrison then InitGarrison(); InitGarrison = nil end
+		MissionList_Update(GarrisonMissionFrame.MissionTab.MissionList)
+	end,
+
+	-- Legion class hall
+	[LE_FOLLOWER_TYPE_GARRISON_7_0] = function()
+		if InitOrderHall then InitOrderHall(); InitOrderHall = nil end
+		MissionList_Update(OrderHallMissionFrame.MissionTab.MissionList)
+	end,
+}
+
+
+ns.OnLoad.MissionList = OnShow[LE_FOLLOWER_TYPE_GARRISON_6_0]
+ns.RegisterEvent("GARRISON_MISSION_NPC_OPENED", function(event, garrison_type)
+	if OnShow[garrison_type] then OnShow[garrison_type]() end
+end)

@@ -58,10 +58,10 @@ local function CacheDatas()
 		end
 	end
 end
-ns.OnLoad = CacheDatas
+ns.OnLoad.MissionsComplete = CacheDatas
 
 
-function ns.GARRISON_MISSION_NPC_OPENED(...)
+function ns.GARRISON_MISSION_NPC_OPENED.MissionsComplete(...)
 	ns.Debug(...)
 	CacheDatas()
 end
