@@ -13,12 +13,13 @@ function ns.OnLoad()
 end
 
 
--- The OrderHall UI is bit more complicated...
-function ns.GARRISON_MISSION_NPC_OPENED(event, garrison_type)
-	if garrison_type == LE_FOLLOWER_TYPE_GARRISON_7_0 then
-		for _,func in pairs(ns.InitOrderHall) do func() end
-		ns.UnregisterEvent("GARRISON_MISSION_NPC_OPENED")
-		ns.InitOrderHall = nil
-	end
+function ns.ADDON_LOADED(event, addon)
+	-- Blizzard_OrderHallUI will be loaded when we enter the order hall zone
+	if addon ~= "Blizzard_OrderHallUI" then return end
+
+	for _,func in pairs(ns.InitOrderHall) do func() end
+	ns.UnregisterEvent("ADDON_LOADED")
+	ns.InitOrderHall = nil
+	ns.ADDON_LOADED = nil
 end
-ns.RegisterEvent("GARRISON_MISSION_NPC_OPENED")
+ns.RegisterEvent("ADDON_LOADED")
