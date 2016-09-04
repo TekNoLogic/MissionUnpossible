@@ -118,11 +118,11 @@ local function HideTooltip(self, button)
 end
 
 
-local function Hook(frame)
+local function Hook(frame, show_counter)
 	local list = frame.MissionTab.MissionList
 	mission_lists[list] = list
 	mission_lists[list.listScroll] = list
-	show_counters[list] = true
+	show_counters[list] = show_counter
 
 	local f = CreateFrame("Frame", nil, list)
 	f:SetScript("OnShow", MissionList_Update)
@@ -133,7 +133,7 @@ end
 
 
 function ns.InitGarrison.MissionList()
-	Hook(GarrisonMissionFrame)
+	Hook(GarrisonMissionFrame, true)
 
 	hooksecurefunc("GarrisonMissionButton_OnEnter", HideTooltip)
 	local butts = GarrisonMissionFrame.MissionTab.MissionList.listScroll.buttons
@@ -144,5 +144,5 @@ end
 
 
 function ns.InitOrderHall.MissionList()
-	Hook(OrderHallMissionFrame)
+	Hook(OrderHallMissionFrame, false)
 end
