@@ -129,6 +129,8 @@ local function Hook(frame, show_counter)
 	mission_lists[f] = list
 
 	hooksecurefunc(list.listScroll, "update", MissionList_Update)
+
+	MissionList_Update(list)
 end
 
 
