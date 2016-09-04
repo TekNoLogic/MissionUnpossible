@@ -118,48 +118,31 @@ local function HideTooltip(self, button)
 end
 
 
-local function InitGarrison()
-	local list = GarrisonMissionFrame.MissionTab.MissionList
+local function Hook(frame)
+	local list = frame.MissionTab.MissionList
 	mission_lists[list] = list
 	mission_lists[list.listScroll] = list
 	show_counters[list] = true
 
+	local f = CreateFrame("Frame", nil, list)
+	f:SetScript("OnShow", MissionList_Update)
+	mission_lists[f] = list
+
 	hooksecurefunc(list.listScroll, "update", MissionList_Update)
+end
+
+
+function ns.InitGarrison.MissionList()
+	Hook(GarrisonMissionFrame)
 
 	hooksecurefunc("GarrisonMissionButton_OnEnter", HideTooltip)
-	for _,butt in pairs(list.listScroll.buttons) do
+	local butts = GarrisonMissionFrame.MissionTab.MissionList.listScroll.buttons
+	for _,butt in pairs(butts) do
 		butt:HookScript("OnEnter", HideTooltip)
 	end
 end
 
 
-local function InitOrderHall()
-	local list = OrderHallMissionFrame.MissionTab.MissionList
-	mission_lists[list] = list
-	mission_lists[list.listScroll] = list
-	show_counters[list] = false
-
-	-- hooksecurefunc(OrderHallMissionFrame, "OnShowMainFrame", MissionList_Update)
-	hooksecurefunc(list.listScroll, "update", MissionList_Update)
+function ns.InitOrderHall.MissionList()
+	Hook(OrderHallMissionFrame)
 end
-
-
-local OnShow = {
-	-- Draenor garrison
-	[LE_FOLLOWER_TYPE_GARRISON_6_0] = function()
-		if InitGarrison then InitGarrison(); InitGarrison = nil end
-		MissionList_Update(GarrisonMissionFrame.MissionTab.MissionList)
-	end,
-
-	-- Legion class hall
-	[LE_FOLLOWER_TYPE_GARRISON_7_0] = function()
-		if InitOrderHall then InitOrderHall(); InitOrderHall = nil end
-		MissionList_Update(OrderHallMissionFrame.MissionTab.MissionList)
-	end,
-}
-
-
-ns.OnLoad.MissionList = OnShow[LE_FOLLOWER_TYPE_GARRISON_6_0]
-ns.RegisterEvent("GARRISON_MISSION_NPC_OPENED", function(event, garrison_type)
-	if OnShow[garrison_type] then OnShow[garrison_type]() end
-end)

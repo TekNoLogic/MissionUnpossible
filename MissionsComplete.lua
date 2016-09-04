@@ -58,13 +58,10 @@ local function CacheDatas()
 		end
 	end
 end
-ns.OnLoad.MissionsComplete = CacheDatas
 
 
-ns.RegisterEvent("GARRISON_MISSION_NPC_OPENED", function(...)
-	ns.Debug(...)
-	CacheDatas()
-end)
+ns.InitGarrison.MissionsComplete = CacheDatas
+butt:SetScript("OnShow", CacheDatas)
 
 
 local SUCCESS = ITEM_QUALITY_COLORS[2].hex.. "successful|r"

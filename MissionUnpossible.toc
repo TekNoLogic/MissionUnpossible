@@ -16,6 +16,8 @@ externals\print.lua
 externals\ptr.lua
 externals\ui-multicolumn-tooltip.lua
 
+Init.lua
+
 AbilitySummary.lua
 AutoAdd.lua
 BossMechanicFrames.lua
