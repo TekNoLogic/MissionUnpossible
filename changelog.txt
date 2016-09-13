@@ -1,3 +1,9 @@
+### 7.0.0.6-Beta
+
+* Add support for order hall to MissionList module
+* Add class hall support to FollowerClick module
+
+
 ### 7.0.0.5-Beta
 
 * Fix some broken tooltips
