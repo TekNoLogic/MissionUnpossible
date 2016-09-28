@@ -118,8 +118,3 @@ end
 
 hooksecurefunc(GarrisonMission, "OnShowMainFrame", MissionList_Update)
 hooksecurefunc(GarrisonMissionFrame.MissionTab.MissionList.listScroll, "update", MissionList_Update)
-
-
-local function HideTooltip(self, button)
-	if not self.info.inProgress then GameTooltip:Hide() end
-end
