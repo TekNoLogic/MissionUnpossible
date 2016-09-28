@@ -91,6 +91,7 @@ local function UpdateMission(frame, show_counter)
 
 	local exp = expire_strings[frame]
 	exp:SetText(GARRISON_MISSION_AVAILABILITY.. ": ".. mission.offerTimeRemaining)
+	exp:Show()
 
 	for i,rewardframe in pairs(frame.Rewards) do
 		SetReward(rewardframe, mission.rewards)
@@ -104,6 +105,7 @@ local function MissionList_Update(self)
 	local list = mission_lists[self]
 	if list.showInProgress then
 		for i,butt in pairs(follower_counters) do butt:Hide() end
+		for i,butt in pairs(expire_strings) do butt:Hide() end
 	else
 		for i,button in pairs(list.listScroll.buttons) do
 			local show_counter = show_counters[list]
@@ -128,7 +130,7 @@ local function Hook(frame, show_counter)
 	f:SetScript("OnShow", MissionList_Update)
 	mission_lists[f] = list
 
-	hooksecurefunc(list.listScroll, "update", MissionList_Update)
+	hooksecurefunc(list, "Update", MissionList_Update)
 
 	MissionList_Update(list)
 end
