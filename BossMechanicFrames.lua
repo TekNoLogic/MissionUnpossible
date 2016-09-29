@@ -8,7 +8,7 @@ local function OnEnter(self)
 		return ShowAbilityTooltip(self, self.counterAbility.id, self.followerTypeID)
 	end
 
-	return GarrisonMissionMechanic_OnEnter(self)
+	return ns.ShowMechanicTooltip(self, self.info.name, self.info.description)
 end
 
 

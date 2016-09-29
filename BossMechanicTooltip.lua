@@ -101,25 +101,30 @@ function ns.FollowerToString(follower)
 end
 
 
-local f = CreateFrame("Frame")
-f:SetScript("OnHide", GameTooltip_Hide)
+local hider = CreateFrame("Frame")
+hider:SetScript("OnHide", GameTooltip_Hide)
 
 
 local tip = GarrisonMissionMechanicTooltip
 function tip.Show()
-	RefreshFollowers()
-	ns.RefreshInProgress()
-
 	local _, anchor = tip:GetPoint(1)
 	local mechanic = tip.Name:GetText()
 	local desc = tip.Description:GetText()
 
-	f:SetParent(anchor)
+	ns.ShowMechanicTooltip(anchor, mechanic, desc)
+end
+
+
+function ns.ShowMechanicTooltip(anchor, mechanic, desc)
+	RefreshFollowers()
+	ns.RefreshInProgress()
+
+	hider:SetParent(anchor)
 	anchor:SetScript("OnLeave", GameTooltip_Hide)
 
 	GameTooltip:SetOwner(anchor, "ANCHOR_BOTTOMLEFT")
 	GameTooltip:AddLine(mechanic, 1,1,1)
-	GameTooltip:AddLine(desc, nil,nil,nil, true)
+	if desc then GameTooltip:AddLine(desc, nil,nil,nil, true) end
 	GameTooltip:AddLine(" ")
 
 	for i,follower in pairs(followers) do
