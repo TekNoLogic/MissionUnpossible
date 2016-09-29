@@ -116,7 +116,8 @@ end
 
 
 local hide_tips = {
-	[LE_FOLLOWER_TYPE_GARRISON_6_0] = true
+	[LE_FOLLOWER_TYPE_GARRISON_6_0] = true,
+	[LE_FOLLOWER_TYPE_GARRISON_7_0] = true,
 }
 local function HideTooltip(self, button)
 	if not self.info then return end
