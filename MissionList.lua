@@ -115,8 +115,15 @@ local function MissionList_Update(self)
 end
 
 
+local hide_tips = {
+	[LE_FOLLOWER_TYPE_GARRISON_6_0] = true
+}
 local function HideTooltip(self, button)
-	if not self.info.inProgress then GameTooltip:Hide() end
+	if not self.info then return end
+	if self.info.inProgress then return end
+	if not hide_tips[self.info.followerTypeID] then return end
+
+	GameTooltip:Hide()
 end
 
 
