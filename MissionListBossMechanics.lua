@@ -73,15 +73,12 @@ local SHOW_ABILITY = {}
 for i,options in pairs(GarrisonFollowerOptions) do
 	SHOW_ABILITY[i] = options.displayCounterAbilityInPlaceOfMechanic
 end
-local function GetMechanicTexture(self, mechanicID, mechanic)
+local function GetCounterAbility(self, mechanicID, mechanic)
 	local followerTypeID = self.info.followerTypeID
-	local default = mechanic.icon
-	if not SHOW_ABILITY[followerTypeID] then return default end
+	if not SHOW_ABILITY[followerTypeID] then return end
 
 	local abilities = mission_frames[self].abilityCountersForMechanicTypes
-	if not abilities then return default end
-
-	return abilities[mechanicID].icon
+	return abilities and abilities[mechanicID]
 end
 
 
@@ -102,8 +99,10 @@ local function UpdateMission(frame)
 
 			mech.info = mechanic
 			mech.followerTypeID = mission.followerTypeID
+			mech.showAbility = SHOW_ABILITY[mech.followerTypeID]
+			mech.counterAbility = GetCounterAbility(frame, mechanicID, mechanic)
 
-			mech.Icon:SetTexture(GetMechanicTexture(frame, mechanicID, mechanic))
+			mech.Icon:SetTexture((mech.counterAbility or mechanic).icon)
 			mech.label:SetText(GetCounterText(mechanic.name, mission))
 			usedbuffs[mechanic.name] = usedbuffs[mechanic.name] + 1
 

@@ -2,19 +2,31 @@
 local myname, ns = ...
 
 
+local ShowAbilityTooltip = ShowGarrisonFollowerMissionAbilityTooltip
+local function OnEnter(self)
+	if self.counterAbility then
+		return ShowAbilityTooltip(self, self.counterAbility.id, self.followerTypeID)
+	end
+
+	return GarrisonMissionMechanic_OnEnter(self)
+end
+
+
 local frames = {}
 local function CreateBossMechanicFrame()
 	local parent = GarrisonMissionFrame.MissionTab.MissionList
 	local template = "GarrisonMissionLargeMechanicTemplate"
-	local f = CreateFrame("Frame", nil, parent, template)
+	local frame = CreateFrame("Frame", nil, parent, template)
 
-	local label = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	local label = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 	label:SetPoint("BOTTOM", 0, -16)
-	f.label = label
+	frame.label = label
 
-	table.insert(frames, f)
+	frame:SetScript("OnEnter", OnEnter)
 
-	return f
+	table.insert(frames, frame)
+
+	return frame
 end
 
 
