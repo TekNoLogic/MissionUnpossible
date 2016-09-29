@@ -25,7 +25,7 @@ end
 
 
 function ns.FollowerToString(follower)
-	local level = follower.isMaxLevel and follower.iLevel or folower.level
+	local level = follower.isMaxLevel and follower.iLevel or follower.level
 	level = ITEM_QUALITY_COLORS[follower.quality].hex.. level
 
 	local colorblind = GetCVarBool("colorblindMode")
