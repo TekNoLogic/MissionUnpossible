@@ -24,7 +24,7 @@ icon:SetTexCoord(1/64, 63/64, 1/64, 63/64)
 butt:SetScript("OnLeave", GameTooltip_Hide)
 butt:SetScript("OnEnter", function(self)
 	local followers = C_Garrison.GetFollowers(LE_FOLLOWER_TYPE_GARRISON_6_0)
-	ns.RefreshInProgress()
+	ns.RefreshInProgress(LE_FOLLOWER_TYPE_GARRISON_6_0)
 
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
 	GameTooltip:AddLine("Followers currently leveling")

@@ -18,14 +18,18 @@ externals\ui-multicolumn-tooltip.lua
 
 Init.lua
 
+models\Follower.lua
+
 AbilitySummary.lua
 AutoAdd.lua
 BossMechanicFrames.lua
 BossMechanicTooltip.lua
+CounterAbilityTooltip.lua
 FollowerClick.lua
 FollowerSearch.lua
 FollowerTimeLeft.lua
 FollowerTNL.lua
+FollowerToString.lua
 FollowerUpgrades.lua
 LevelingSummary.lua
 MissionList.lua

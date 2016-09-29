@@ -2,13 +2,9 @@
 local myname, ns = ...
 
 
-local ShowAbilityTooltip = ShowGarrisonFollowerMissionAbilityTooltip
 local function OnEnter(self)
-	if self.counterAbility then
-		return ShowAbilityTooltip(self, self.counterAbility.id, self.followerTypeID)
-	end
-
-	return ns.ShowMechanicTooltip(self, self.info.name, self.info.description)
+	if self.counterAbility then return ns.ShowAbilityTooltip(self) end
+	return ns.ShowMechanicTooltip(self)
 end
 
 
