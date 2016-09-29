@@ -68,6 +68,23 @@ local function GetCounterText(trait, mission)
 end
 
 
+local mission_frames = {}
+local SHOW_ABILITY = {}
+for i,options in pairs(GarrisonFollowerOptions) do
+	SHOW_ABILITY[i] = options.displayCounterAbilityInPlaceOfMechanic
+end
+local function GetMechanicTexture(self, mechanicID, mechanic)
+	local followerTypeID = self.info.followerTypeID
+	local default = mechanic.icon
+	if not SHOW_ABILITY[followerTypeID] then return default end
+
+	local abilities = mission_frames[self].abilityCountersForMechanicTypes
+	if not abilities then return default end
+
+	return abilities[mechanicID].icon
+end
+
+
 local function UpdateMission(frame)
 	local mission = frame.info
 	if not mission then return end
@@ -80,13 +97,13 @@ local function UpdateMission(frame)
 	local anchor = frame.Rewards[#mission.rewards]
 	local lastframe
 	for _,boss in pairs(missionbosses) do
-		for _,mechanic in pairs(boss.mechanics) do
+		for mechanicID,mechanic in pairs(boss.mechanics) do
 			local mech = ns.GetBossMechanicFrame()
 
 			mech.info = mechanic
-			mech.followerTypeID = LE_FOLLOWER_TYPE_GARRISON_6_0
+			mech.followerTypeID = mission.followerTypeID
 
-			mech.Icon:SetTexture(mechanic.icon)
+			mech.Icon:SetTexture(GetMechanicTexture(frame, mechanicID, mechanic))
 			mech.label:SetText(GetCounterText(mechanic.name, mission))
 			usedbuffs[mechanic.name] = usedbuffs[mechanic.name] + 1
 
@@ -104,17 +121,43 @@ local function UpdateMission(frame)
 end
 
 
-local MissionList = GarrisonMissionFrame.MissionTab.MissionList
+local mission_lists = {}
 local function MissionList_Update(self)
+	local list = mission_lists[self]
 	ns.HideBossMechanicFrames()
 
-	if not MissionList.showInProgress then
-		for i,button in pairs(MissionList.listScroll.buttons) do
+	if not list.showInProgress then
+		for i,button in pairs(list.listScroll.buttons) do
 			UpdateMission(button)
 		end
 	end
 end
 
 
-hooksecurefunc(GarrisonMission, "OnShowMainFrame", MissionList_Update)
-hooksecurefunc(GarrisonMissionFrame.MissionTab.MissionList.listScroll, "update", MissionList_Update)
+local function Hook(frame)
+	local list = frame.MissionTab.MissionList
+	mission_lists[list] = list
+	mission_lists[list.listScroll] = list
+
+	for i,butt in pairs(list.listScroll.buttons) do
+		mission_frames[butt] = frame
+	end
+
+	local f = CreateFrame("Frame", nil, list)
+	f:SetScript("OnShow", MissionList_Update)
+	mission_lists[f] = list
+
+	hooksecurefunc(list, "Update", MissionList_Update)
+
+	MissionList_Update(list)
+end
+
+
+function ns.InitGarrison.MissionListBossMechanic()
+	Hook(GarrisonMissionFrame)
+end
+
+
+function ns.InitOrderHall.MissionListBossMechanic()
+	Hook(OrderHallMissionFrame)
+end
