@@ -19,6 +19,8 @@ externals\ui-multicolumn-tooltip.lua
 Init.lua
 
 frames\BossMechanic.lua
+frames\BossMechanicTooltip.lua
+frames\CounterAbilityTooltip.lua
 
 models\Follower.lua
 
@@ -26,8 +28,6 @@ services\FollowerToString.lua
 
 AbilitySummary.lua
 AutoAdd.lua
-BossMechanicTooltip.lua
-CounterAbilityTooltip.lua
 FollowerClick.lua
 FollowerSearch.lua
 FollowerTimeLeft.lua
