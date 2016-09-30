@@ -115,20 +115,7 @@ function ns.GARRISON_MISSION_BONUS_ROLL_COMPLETE(event, missionID, succeeded)
 	ns.Debug(event, missionID, succeeded)
 
 	for id,reward in pairs(mission.rewards) do
-		if reward.itemID then
-			if reward.itemID ~= 120205 then
-				-- [XP] is communicated as an item here (Item #120205)
-				-- It sends the standard chat log exp gain though
-				ns.Debug("reward.itemID", reward.itemID, GetItemInfo(reward.itemID))
-
-				local _, link = GetItemInfo(reward.itemID)
-				if reward.quantity > 1 then
-					ns.ChatFramePrintf("CHAT_MSG_LOOT", LOOT_ITEM_PUSHED_SELF_MULTIPLE, link, reward.quantity)
-				else
-					ns.ChatFramePrintf("CHAT_MSG_LOOT", LOOT_ITEM_PUSHED_SELF, link or "[Unknown item #".. reward.itemID.. "]")
-				end
-			end
-		else
+		if not reward.itemID then
 			if reward.currencyID and reward.quantity then
 				if reward.currencyID == 0 then
 					ns.ChatFramePrint("CHAT_MSG_MONEY", "Received gold:", ns.GS(reward.quantity))
