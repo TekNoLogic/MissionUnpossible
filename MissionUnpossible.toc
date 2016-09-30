@@ -18,13 +18,14 @@ externals\ui-multicolumn-tooltip.lua
 
 Init.lua
 
+frames\BossMechanic.lua
+
 models\Follower.lua
 
 services\FollowerToString.lua
 
 AbilitySummary.lua
 AutoAdd.lua
-BossMechanicFrames.lua
 BossMechanicTooltip.lua
 CounterAbilityTooltip.lua
 FollowerClick.lua
