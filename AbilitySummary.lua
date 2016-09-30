@@ -18,8 +18,8 @@ local tip = ns.NewTooltip(12)
 
 local function IsMaxLevel(follower)
   if not follower.isCollected then return false end
+  if not follower.isMaxLevel then return false end
   if follower.quality < 4 then return false end
-  if follower.level < 100 then return false end
   return true
 end
 

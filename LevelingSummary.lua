@@ -4,8 +4,8 @@ local myname, ns = ...
 
 function ns.IsFollowerLeveling(follower)
 	if not follower.isCollected then return false end
+	if not follower.isMaxLevel then return true end
 	if follower.quality < 4 then return true end
-	if follower.level < 100 then return true end
 end
 
 
