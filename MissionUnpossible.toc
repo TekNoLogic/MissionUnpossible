@@ -20,6 +20,8 @@ Init.lua
 
 models\Follower.lua
 
+services\FollowerToString.lua
+
 AbilitySummary.lua
 AutoAdd.lua
 BossMechanicFrames.lua
@@ -29,7 +31,6 @@ FollowerClick.lua
 FollowerSearch.lua
 FollowerTimeLeft.lua
 FollowerTNL.lua
-FollowerToString.lua
 FollowerUpgrades.lua
 LevelingSummary.lua
 MissionList.lua
