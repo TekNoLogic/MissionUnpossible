@@ -1,3 +1,10 @@
+### 7.0.0.7-Beta
+
+* Add mechanics to class hall lists
+* Hide expiration on order hall in progress page
+* nix item loot echo, blizzy fixed that
+
+
 ### 7.0.0.6-Beta
 
 * Add support for order hall to MissionList module
