@@ -90,7 +90,11 @@ local function UpdateMission(frame, show_counter)
 	frame.Title:SetText(mission.name:gsub("Exploration: ", ""))
 
 	local exp = expire_strings[frame]
-	exp:SetText(GARRISON_MISSION_AVAILABILITY.. ": ".. mission.offerTimeRemaining)
+	if mission.offerEndTime then
+		exp:SetText(GARRISON_MISSION_AVAILABILITY.. ": ".. mission.offerTimeRemaining)
+	else
+		exp:SetText("No expiration")
+	end
 	exp:Show()
 
 	for i,rewardframe in pairs(frame.Rewards) do
