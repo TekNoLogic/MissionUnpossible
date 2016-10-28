@@ -4,9 +4,10 @@ local myname, ns = ...
 
 local function Hook(missionpage)
 	local function RemoveFollower(followerID)
+		local missionframe = missionpage:GetParent():GetParent()
 		for i,frame in pairs(missionpage.Followers) do
 			if frame.info and frame.info.followerID == followerID then
-				return GarrisonMissionFrame:RemoveFollowerFromMission(frame, true)
+				return missionframe:RemoveFollowerFromMission(frame, true)
 			end
 		end
 	end
