@@ -6,6 +6,7 @@ ns.inactive_statii = {
 	[GARRISON_FOLLOWER_ON_MISSION] = true,
 	[GARRISON_FOLLOWER_INACTIVE] = true,
 	[GARRISON_FOLLOWER_WORKING] = true,
+	[GARRISON_FOLLOWER_COMBAT_ALLY] = true,
 }
 function ns.IsFollowerAvailable(guid, excludeparty)
 	local status = C_Garrison.GetFollowerStatus(guid)
