@@ -1,3 +1,10 @@
+### 7.1.0.8-Beta
+
+* Fixx error on right-click to remove OrderHall follower (Thanks @ckaotik)
+* Treat combat ally as unavailable (Thanks @ckaotik)
+* Fix missions with no expiration
+
+
 ### 7.0.0.7-Beta
 
 * Add mechanics to class hall lists
