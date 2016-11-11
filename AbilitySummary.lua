@@ -2,18 +2,7 @@
 local myname, ns = ...
 
 
-local mission = GarrisonMissionFrame.MissionTab.MissionPage
-local search = GarrisonMissionFrame.FollowerList.SearchBox
-local butt = CreateFrame("Frame", nil, search)
-butt:SetSize(24, 24)
-butt:SetPoint("LEFT", search, "RIGHT", 15, 5)
-
-local icon = butt:CreateTexture(nil, "BORDER")
-icon:SetAllPoints()
-icon:SetTexture("Interface\\Icons\\garrison_building_barracks")
-
-local tip = ns.NewTooltip(12)
-
+local mechanics = {}
 
 
 local function IsMaxLevel(follower)
@@ -26,12 +15,15 @@ end
 
 local GetAbility = C_Garrison.GetFollowerAbilityAtIndex
 local GetMechanic = C_Garrison.GetFollowerAbilityCounterMechanicInfo
+local GetSpec = C_Garrison.GetFollowerSpecializationAtIndex
 local function CanCounter(follower, mechanic)
-  for i=1,4 do
-    local abilityID = GetAbility(follower.followerID, i)
+  for i=0,4 do
+    local abilityID = i == 0 and GetSpec(follower.followerID, 1) or GetAbility(follower.followerID, i)
     if abilityID and abilityID > 0 then
       local mechanicID, name, tex = GetMechanic(abilityID)
-      if mechanicID == mechanic then return tex end
+      if mechanicID == mechanic then
+        return GarrisonFollowerOptions[follower.followerTypeID].displayCounterAbilityInPlaceOfMechanic and C_Garrison.GetFollowerAbilityIcon(abilityID) or tex
+      end
     end
   end
 end
@@ -63,7 +55,7 @@ end
 
 local function CounterText(follower, mechanic)
   local tex = CanCounter(follower, mechanic)
-  if tex then return "|T".. tex.. ":16|t"end
+  if tex then return "|T".. tex.. ":16|t" end
   return " "
 end
 
@@ -71,24 +63,27 @@ end
 local function FirstAbility(follower)
   if not IsMaxLevel(follower) then return 999 end
 
-  for i=1,10 do
-    if i ~= 5 and CanCounter(follower, i) then return i end
+  for i=1,#mechanics[follower.followerTypeID] do
+    if CanCounter(follower, mechanics[follower.followerTypeID][i].id) then return i end
   end
+  return 999
 end
 
 
 local function LastAbility(follower)
   if not IsMaxLevel(follower) then return 999 end
 
-  for i=10,1,-1 do
-    if i ~= 5 and CanCounter(follower, i) then return i end
+  for i=#mechanics[follower.followerTypeID], 1, -1 do
+    if CanCounter(follower, mechanics[follower.followerTypeID][i].id) then return i end
   end
+  return 999
 end
 
 
 local RACIALS = {}
 for i=63,75 do RACIALS[i] = true end -- Core races
 for i=252,255 do RACIALS[i] = true end -- Other races
+for i=698,745 do RACIALS[i] = true end -- Order hall companions
 local function RacialText(follower)
   local str = ""
   for i=1,6 do
@@ -102,11 +97,19 @@ local function RacialText(follower)
 end
 
 
-local FIVEPERC = {[201] = true} -- Combat experience
+local FIVEPERC = {
+  [201] = true, -- Combat experience
+  [663] = true, -- Order hall
+  [688] = true,
+  [691] = true,
+  [748] = true,
+}
 for i=36,43 do FIVEPERC[i] = true end -- Slayers
 for i=44,49 do FIVEPERC[i] = true end -- Environs
 for i=7,9 do FIVEPERC[i] = true end
 for i=76,77 do FIVEPERC[i] = true end
+for i=683,685 do FIVEPERC[i] = true end -- Order hall
+for i=694,697 do FIVEPERC[i] = true end
 local function BonusText(follower)
   local str = ""
   for i=1,6 do
@@ -130,14 +133,19 @@ local function sorter(a,b)
   end
 end
 
-butt:SetScript("OnLeave", function() tip:Hide() end)
-butt:SetScript("OnEnter", function(self)
-  local mission = GarrisonMissionFrame.MissionTab.MissionPage.missionInfo
+local function mechanicsorter(a,b)
+  return a.id < b.id
+end
+
+local line = {}
+local function enter(self)
+  local mission = self.frame.MissionTab.MissionPage.missionInfo
   missiondetails = nil
 
-  local followers = C_Garrison.GetFollowers(LE_FOLLOWER_TYPE_GARRISON_6_0)
+  local followers = C_Garrison.GetFollowers(self.followertype)
   table.sort(followers, sorter)
 
+  local tip = self.tip
   -- tip:AnchorTo(self)
   tip:Clear()
   tip:ClearAllPoints()
@@ -148,25 +156,56 @@ butt:SetScript("OnEnter", function(self)
 
   for i,follower in pairs(followers) do
     if IsShown(follower, mission) then
-      local wag = CounterText(follower, 1)  -- Wild Aggression
-      local mst = CounterText(follower, 2)  -- Massive Strike
-      local gda = CounterText(follower, 3)  -- Group Damage
-      local mde = CounterText(follower, 4)  -- Magic Debuff
-      local dzo = CounterText(follower, 6)  -- Danger Zones
-      local msw = CounterText(follower, 7)  -- Minion Swarms
-      local psp = CounterText(follower, 8)  -- Powerful Spell
-      local dmi = CounterText(follower, 9)  -- Deadly Minions
-      local tba = CounterText(follower, 10) -- Timed Battle
+      wipe(line)
+      for _, mechanic in ipairs(self.mechanics) do
+        table.insert(line, CounterText(follower, mechanic.id))
+      end
+      table.insert(line, RacialText(follower))
+      table.insert(line, BonusText(follower))
 
-      local racial = RacialText(follower)
-      local bonus = BonusText(follower)
-
-      tip:AddMultiLine(follower.name,
-                       wag, mst, gda, mde, dzo, msw, psp, dmi, tba,
-                       racial, bonus,
-                       1,1,1)
+      tip:AddMultiLine(follower.name, unpack(line))
     end
   end
 
   tip:Show()
-end)
+end
+
+local function Init(frame, followertype)
+  local list = frame.MissionTab.MissionList
+  local mission = frame.MissionTab.MissionPage
+  local search = frame.FollowerList.SearchBox
+
+  local butt = CreateFrame("Frame", nil, search)
+  butt:SetSize(24, 24)
+  butt:SetPoint("LEFT", search, "RIGHT", 15, 5)
+
+  local icon = butt:CreateTexture(nil, "BORDER")
+  icon:SetAllPoints()
+  icon:SetTexture("Interface\\Icons\\garrison_building_barracks")
+
+  butt:SetScript("OnLeave", function(self) self.tip:Hide() end)
+  butt:SetScript("OnEnter", enter)
+
+  butt.frame = frame
+  butt.followertype = followertype
+  butt.mechanics = {}
+  for i, mechanic in ipairs(C_Garrison.GetAllEncounterThreats(followertype)) do
+    if followertype ~= LE_FOLLOWER_TYPE_GARRISON_7_0 or mechanic.id > 10 then
+      table.insert(butt.mechanics, mechanic)
+    end
+  end
+  if followertype == LE_FOLLOWER_TYPE_GARRISON_6_0 then
+    table.sort(butt.mechanics, mechanicsorter)
+  end
+  mechanics[followertype] = butt.mechanics
+
+  butt.tip = ns.NewTooltip(#butt.mechanics + 3)
+end
+
+function ns.InitGarrison.AbilitySummary()
+  Init(GarrisonMissionFrame, LE_FOLLOWER_TYPE_GARRISON_6_0)
+end
+
+function ns.InitOrderHall.AbilitySummary()
+  Init(OrderHallMissionFrame, LE_FOLLOWER_TYPE_GARRISON_7_0)
+end
