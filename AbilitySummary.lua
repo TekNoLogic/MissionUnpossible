@@ -16,13 +16,14 @@ end
 local GetAbility = C_Garrison.GetFollowerAbilityAtIndex
 local GetMechanic = C_Garrison.GetFollowerAbilityCounterMechanicInfo
 local GetSpec = C_Garrison.GetFollowerSpecializationAtIndex
-local counters = C_Garrison.GetFollowerAbilityCountersForMechanicTypes(LE_FOLLOWER_TYPE_GARRISON_7_0)
 local function CanCounter(follower, mechanic)
   for i=0,4 do
     local abilityID = i == 0 and GetSpec(follower.followerID, 1) or GetAbility(follower.followerID, i)
     if abilityID and abilityID > 0 then
       local mechanicID, name, tex = GetMechanic(abilityID)
-      if mechanicID == mechanic then return counters[mechanicID] and counters[mechanicID].icon or tex end
+      if mechanicID == mechanic then
+        return GarrisonFollowerOptions[follower.followerTypeID].displayCounterAbilityInPlaceOfMechanic and C_Garrison.GetFollowerAbilityIcon(abilityID) or tex
+      end
     end
   end
 end
