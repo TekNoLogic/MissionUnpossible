@@ -37,3 +37,4 @@ LevelingSummary.lua
 MissionList.lua
 MissionListBossMechanics.lua
 MissionsComplete.lua
+MovableMissionFrame.lua
